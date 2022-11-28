@@ -6,7 +6,7 @@ trate_stopwalk
 
 .WALK_INC       equ     2
 .WALK_TIME      equ     100
-.STOP_TIME      equ     50
+.STOP_TIME      equ     60
 .STATE_STOPPED  equ     0
 .STATE_WALKING  equ     1
 
@@ -64,13 +64,13 @@ trate_stopwalk
         ld      a, [ix+OFFSET_INC_X]
         neg
         ld      [ix+OFFSET_INC_X], a
-        jr      .render
+        jr      .trate_walking
 
 .turn_around_y
         ld      a, [ix+OFFSET_INC_Y]
         neg
         ld      [ix+OFFSET_INC_Y], a
-        jr      .render
+        jr      .trate_walking
 
 .change_state_stopped
         ld      [ix+OFFSET_STATE_COUNTER], 0
@@ -121,6 +121,13 @@ trate_stopwalk
         add     hl, de
         xor     a
         ld      [hl], a
+        dec     hl
+        ld      [hl], a
+        ld      bc, -32
+        add     hl, bc
+        ld      [hl], a
+        inc     hl
+        ld      [hl], a 
 
         jp      next_entity
 

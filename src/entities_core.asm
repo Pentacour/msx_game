@@ -71,6 +71,7 @@ reset_entities
 
 ;=======================================
 ;::check_if_valid_position_entity
+;       in: IX entity data.
 ;       out: True if valid position.
 ;========================================
 check_if_valid_position_entity
@@ -80,6 +81,19 @@ check_if_valid_position_entity
         call    YXToOffset
         ld      hl, camera_view
         add     hl, de
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, .ret_no
+        dec     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, .ret_no
+        ld      bc, -32
+        add     hl, bc
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, .ret_no
+        inc     hl
         ld      a, [hl]
         cp      SOLID_TILE
         jp      nc, .ret_no
@@ -177,7 +191,7 @@ scroll_entities
 
 .scroll_entity_right
         ld      a, [ix+OFFSET_X]
-        cp      8
+        cp      8*2
         jp      c, .set_not_visible_byleft
         sub     8
         ld      [ix+OFFSET_X], a
