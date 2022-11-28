@@ -124,7 +124,7 @@ TrateRightKey
         ld      a, 8
         add     b
         ld      b, a
-        call    CanGo
+        call    can_go_16x16
         ret     nz
 
                 ; Scroll when right 
@@ -194,7 +194,7 @@ TrateLeftKey
         ld      a, b
         sub     8
         ld      b, a
-        call    CanGo
+        call    can_go_16x16
         ret     nz       
 
         ld      a, [camera_tile_x_left]
@@ -275,7 +275,7 @@ TrateUpKey
         ld      a, c
         sub     8
         ld      c, a
-        call    CanGo
+        call    can_go_16x16
         ret     nz
 
         ld      a, [camera_tile_y_top]
@@ -335,7 +335,7 @@ TrateDownKey
         ld      a, c
         add     8
         ld      c, a
-        call    CanGo
+        call    can_go_16x16
         ret     nz
 
         ld      a, [camera_tile_y_top]
@@ -386,7 +386,7 @@ SetPlayerFrame
         ldir
 
         ld      a, [player_y]
-        sub     8 ;15
+        sub     8 
         ld      [sprites_attributes], a
         ld      a, [player_x]
         sub     8

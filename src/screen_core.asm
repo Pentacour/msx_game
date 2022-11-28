@@ -29,6 +29,13 @@ clear_screen
 ;::render
 ;========================================
 render
+        ld      bc, [player_y]
+        call    YXToOffset
+        ld      hl, camera_view
+        add     hl, de
+        xor     a
+        ld      [hl], a
+
 
         halt
 
@@ -85,7 +92,7 @@ update_camera
         ld      c, a
         ld      b, 0
         add     hl, bc
-        ld      de, screen_view+32*2 ;camera_screen ;mwork.camera_screen+k_camera_lines_offset_up*32
+        ld      de, screen_view+32*2 ;camera_view ;mwork.camera_view+k_camera_lines_offset_up*32
         ld      b, CAMERA_HEIGHT
 .slooprows
         push    bc
@@ -205,34 +212,151 @@ CanGoPlayer
 
 
 ;=======================================================
-;::CanGo
+;::can_go_16x16
+;       origin-> (8,8)
 ;       in-> BC: YX (B=X, C=Y)
 ;========================================================
-CanGo
+can_go_16x16
 
         ld      [param_can_go_y], bc
 
         call    YXToOffset
-        ld      hl, camera_screen
+        ld      hl, camera_view
         add     hl, de
 
+                ; calculates X%8
+        ld      a, [param_can_go_x]
+        and     7
+        cp      0
+        jp      z, .mod_x_0
+
+        ld      a, [param_can_go_y]
+        and     7
+        cp      0
+        jp      z, .mod_x_no0_y_0
+
+.mod_x_no0_y_no0 
         ld      a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        inc   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        ld    bc, 32
-        add   hl, bc    
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        dec   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        inc     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        dec     hl
+        dec     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        ld      bc, -32
+        add     hl, bc
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        inc     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        inc     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        ld      bc, 64
+        add     hl, bc    
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        dec     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        dec     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        jp      RetYes
+
+.mod_x_no0_y_0 
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        inc     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        dec     hl
+        dec     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        ld      bc, -32
+        add     hl, bc
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        inc     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        inc     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        jp      RetYes
+
+.mod_x_0  
+        ld      a, [param_can_go_y]
+        and     7
+        cp      0
+        jp      z, .mod_x_0_y_0
+
+.mod_x0_y_no0 
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        dec     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        ld      bc, -32
+        add     hl, bc 
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        inc     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        ld      bc, 64
+        add     hl, bc  
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        dec     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        jp      RetYes
+
+.mod_x_0_y_0    
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        dec     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        ld      bc, -32
+        add     hl, bc
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        inc     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, RetNo
+        jp      RetYes
+
 RetYes
         xor   a
         cp    0
@@ -242,6 +366,8 @@ RetNo
         xor   a
         cp    1
         ret
+        
+
 
 
 ;=======================================================
@@ -253,7 +379,7 @@ CanGo_OLD
         ld      [param_can_go_y], bc
 
         call    YXToOffset
-        ld      hl, camera_screen
+        ld      hl, camera_view
         add     hl, de
 
                 ; Si X%8=0 ...

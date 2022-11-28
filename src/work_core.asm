@@ -142,7 +142,7 @@ camera_tile_y_top               #1
 camera_tile_x_left              #1
 
 screen_view                     #(2*32)
-camera_screen                   #(22*32)
+camera_view                     #(22*32)
 
 tmp_unzip       	        #(32*8*8)
 

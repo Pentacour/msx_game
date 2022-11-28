@@ -117,7 +117,7 @@ trate_stopwalk
         ld      b, [ix+OFFSET_X]
         ld      c, [ix+OFFSET_Y]
         call    YXToOffset
-        ld      hl, camera_screen
+        ld      hl, camera_view
         add     hl, de
         xor     a
         ld      [hl], a

@@ -209,19 +209,16 @@ YXToOffset_OLD
                         ret
 
 ;==================================
-;::YXToOffset . For 16x16 entities.
-;               Origin (8,8)
+;::YXToOffset 
+;       Offset in camera_view               
 ;in->bc=[yx]  b=x c=y
-;out->de offset for the top-left tile.
+;out->de offset 
 ;==================================
 YXToOffset
-                        ld      a, c
-                        sub     8 
-                        ld      c, a
+                        ld      a, c    ;REFACTOR: two upper rows. Maybe it will be by configuration.
+                        sub     8*2     ;
+                        ld      c, a    ;
 
-                        ld      a, b
-                        sub     8
-                        ld      b, a
                         ld      d, b
                         ld      e, c    ; save bc
 
