@@ -1,2 +1,2 @@
 # msx_game
-MSX game in assembler used in live programming videos.
+Juego para MSX utilizado en los vídeos de programación en directo en la lista de youtube https://www.youtube.com/playlist?list=PL25NrgshxiixnpMwHPxw4jwi423ffzPQ9
