@@ -192,7 +192,7 @@ scroll_entities
 .scroll_entity_right
         ld      a, [ix+OFFSET_X]
         cp      8*2
-        jp      c, .set_not_visible_byleft
+        jp      c, .set_not_visible_by_left
         sub     8
         ld      [ix+OFFSET_X], a
         jp      .next_entity
@@ -207,8 +207,9 @@ scroll_entities
     jp    .next_entity
 
 .scroll_entity_down
-;    ld    [ix+entity.k_offset_novisible_counter], 0
-    ld    a, [ix+OFFSET_Y]
+        ld      a, [ix+OFFSET_Y]
+        cp      CAMERA_LINES_OFFSET_UP*8+8*2
+        jp      c, .set_not_visible_by_up
     ;cp    (mscreen.k_camera_lines_offset_up)*8+8
     ;jp    z, .tratevisibletonotbyup
     sub   8
@@ -233,7 +234,7 @@ scroll_entities
     jp    z, .ret
     jp    .loop_scroll_entity
 
-.set_not_visible_byleft
+.set_not_visible_by_left
         ld      [ix+OFFSET_IS_VISIBLE], 0
         ld      [ix+OFFSET_NO_VISIBLE_COUNTER], 0
         ld      a, [camera_tile_x_left]
@@ -248,6 +249,19 @@ scroll_entities
         add     b
         ld      [ix+OFFSET_MAP_Y], a
         jp      .next_entity
+
+.set_not_visible_by_up
+        ld      [ix+OFFSET_IS_VISIBLE], 0
+        ld      [ix+OFFSET_NO_VISIBLE_COUNTER], 0
+        ld      a, [ix+OFFSET_X]
+        srl     a
+        srl     a
+        srl     a
+        ld      [ix+OFFSET_MAP_X], a
+        ld      a, [camera_tile_y_top]
+        ld      [ix+OFFSET_MAP_Y], a
+        jp      .next_entity
+
 .ret
     pop   ix
     ret
