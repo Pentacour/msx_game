@@ -29,14 +29,6 @@ clear_screen
 ;::render
 ;========================================
 render
-        ld      bc, [player_y]
-        call    YXToOffset
-        ld      hl, camera_view
-        add     hl, de
-        xor     a
-        ld      [hl], a
-
-
         halt
 
         ld      hl, screen_view

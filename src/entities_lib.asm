@@ -41,7 +41,7 @@ trate_stopwalk
         jp      nz, .turn_around
 
         ld      a, [ix+OFFSET_X]
-        cp      30*8
+        cp      31*8+1
         jp      nc, .turn_around
 
         cp      8
@@ -85,6 +85,8 @@ trate_stopwalk
 .change_state_walking
         ld      [ix+OFFSET_STATE_COUNTER], 0
         ld      [ix+OFFSET_STATE], .STATE_WALKING
+
+        jp      .change_right ;TODO
 
         ld      a, [animation_tick]
         cp      64

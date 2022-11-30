@@ -34,6 +34,8 @@ init_game
 
         xor     a
         ld      [camera_tile_y_top], a
+
+        ld      a, 32
         ld      [camera_tile_x_left], a
 
         ld      bc, 5*8*256+15*8
