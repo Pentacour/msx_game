@@ -12,4 +12,4 @@ Editor de mapas: Tiled https://www.mapeditor.org/
 
 Editor de tiles: nMSXTiles https://github.com/pipagerardo/nMSXtiles
 
-Editor de texto: Visual Studio Code https://code.visualstudio.com/
+Editor de código: Visual Studio Code https://code.visualstudio.com/
