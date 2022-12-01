@@ -5,8 +5,8 @@
 trate_stopwalk
 
 .WALK_INC       equ     2
-.WALK_TIME      equ     100
-.STOP_TIME      equ     60
+.WALK_TIME      equ     60
+.STOP_TIME      equ     15
 .STATE_STOPPED  equ     0
 .STATE_WALKING  equ     1
 
@@ -81,12 +81,11 @@ trate_stopwalk
         ld      a, [ix+OFFSET_STATE_COUNTER]
         cp      .STOP_TIME
         jr      z, .change_state_walking
+        jp      .render
 
 .change_state_walking
         ld      [ix+OFFSET_STATE_COUNTER], 0
         ld      [ix+OFFSET_STATE], .STATE_WALKING
-
-        jp      .change_right ;TODO
 
         ld      a, [animation_tick]
         cp      64

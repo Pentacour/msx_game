@@ -32,7 +32,7 @@ init_game
         xor     a
         ld      [level], a
 
-        xor     a
+        ld      a, 22
         ld      [camera_tile_y_top], a
 
         ld      a, 32
