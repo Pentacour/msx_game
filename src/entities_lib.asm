@@ -133,6 +133,56 @@ trate_stopwalk
         jp      next_entity
 
 
+;================================
+;::trate_gen_stopwalk
+;  in-> ix: entity vars.
+;===============================
+trate_gen_stopwalk
+
+.PERIOD_TIME    equ     60
+        ld      a, [ix+OFFSET_IS_VISIBLE]
+        cp      0
+        jp      z, next_entity 
+
+        ld      a, [animation_tick]
+        and     3
+        cp      3
+        jp      nz, next_entity
+
+        inc     [ix+OFFSET_STATE_COUNTER]        
+        ld      a, [ix+OFFSET_STATE_COUNTER]
+        cp      .PERIOD_TIME
+        jp      nz, .render
+
+                ; Generate a stopwalk entity
+
+        push    ix
+
+        call    get_next_empty_entity_ix
+        ld      [ix+OFFSET_TYPE], 1 ;TODO Use constant
+        ld      [ix+OFFSET_STATE], 0
+        ld      [ix+OFFSET_STATE_COUNTER], 0
+        ld      [ix+OFFSET_X], 30*8
+        ld      [ix+OFFSET_Y], 8*8
+        ld      [ix+OFFSET_IS_VISIBLE], 1
+
+        pop     ix
+
+        ld      [ix+OFFSET_STATE_COUNTER], a
+        jp      next_entity
+        
+.render
+        ld      b, [ix+OFFSET_X]
+        ld      c, [ix+OFFSET_Y]
+        call    YXToOffset
+        ld      hl, camera_view
+        add     hl, de
+        xor     a
+        ld      [hl], a
+
+        jp      next_entity
+
+
 ;=================================
 ;::inc_not_visible_counter
 ;=================================
