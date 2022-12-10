@@ -124,6 +124,8 @@ tmp_pos_x                       #1
 param_can_go_y                  #1
 param_can_go_x                  #1
 scroll_entities_direction       #1
+prev_y                          #1
+prev_x                          #1
 
 ;============================================
 ; screen vars

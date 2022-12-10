@@ -4,9 +4,9 @@
 ;===============================
 trate_stopwalk
 
-.WALK_INC       equ     2
-.WALK_TIME      equ     60
-.STOP_TIME      equ     15
+.WALK_INC       equ     8
+.WALK_TIME      equ     20
+.STOP_TIME      equ     5
 .STATE_STOPPED  equ     0
 .STATE_WALKING  equ     1
 
@@ -15,8 +15,8 @@ trate_stopwalk
         jp      z, inc_not_visible_counter
 
         ld      a, [animation_tick]
-        and     3
-        cp      3
+        and     15
+        cp      15
         jp      nz, .render
 
         ld      a, [ix+OFFSET_STATE]
@@ -61,7 +61,11 @@ trate_stopwalk
         cp      0
         jr      z, .turn_around_y
 
+.check_turn_around_x
         ld      a, [ix+OFFSET_INC_X]
+        cp      0
+        jp      z, .trate_walking
+
         neg
         ld      [ix+OFFSET_INC_X], a
         jr      .trate_walking
@@ -70,7 +74,7 @@ trate_stopwalk
         ld      a, [ix+OFFSET_INC_Y]
         neg
         ld      [ix+OFFSET_INC_Y], a
-        jr      .trate_walking
+        jr      .check_turn_around_x
 
 .change_state_stopped
         ld      [ix+OFFSET_STATE_COUNTER], 0
@@ -214,48 +218,41 @@ trate_stopsearch
         cp      .WALK_TIME
         jr      z, .change_state_stopped
 
-        ld      a, [ix+OFFSET_INC_X]
-        add     [ix+OFFSET_X]
+        ld      a, [ix+OFFSET_X]
+        ld      [prev_x], a
+        add     [ix+OFFSET_INC_X]
         ld      [ix+OFFSET_X], a
 
-        ld      a, [ix+OFFSET_INC_Y]
-        add     [ix+OFFSET_Y]
+        ld      a, [ix+OFFSET_Y]
+        ld      [prev_y], a
+        add     [ix+OFFSET_INC_Y]
         ld      [ix+OFFSET_Y], a
 
         call    check_if_valid_position_entity
-        jp      nz, .turn_around
+        jp      nz, .set_previous_position
 
         ld      a, [ix+OFFSET_X]
         cp      31*8+1
-        jp      nc, .turn_around
+        jp      nc, .set_previous_position
 
         cp      8
-        jp      c, .turn_around
+        jp      c, .set_previous_position
 
         ld      a, [ix+OFFSET_Y]
-        cp      22*8
-        jp      nc, .turn_around
+        cp      23*8
+        jp      nc, .set_previous_position
 
         cp      8*2+8
-        jp      c, .turn_around
+        jp      c, .set_previous_position
 
         jp      .render
 
-.turn_around
-        ld      a, [ix+OFFSET_INC_X]        
-        cp      0
-        jr      z, .turn_around_y
-
-        ld      a, [ix+OFFSET_INC_X]
-        neg
-        ld      [ix+OFFSET_INC_X], a
-        jr      .trate_walking
-
-.turn_around_y
-        ld      a, [ix+OFFSET_INC_Y]
-        neg
-        ld      [ix+OFFSET_INC_Y], a
-        jr      .trate_walking
+.set_previous_position
+        ld      a, [prev_x]
+        ld      [ix+OFFSET_X], a
+        ld      a, [prev_y]
+        ld      [ix+OFFSET_Y], a
+        jp      .change_state_stopped
 
 .change_state_stopped
         ld      [ix+OFFSET_STATE_COUNTER], 0
