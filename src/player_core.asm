@@ -16,7 +16,7 @@ PLAYER_INC              EQU     2
 ;====================================
 ;::m_check_start_shoot
 ;====================================
- macro m_check_start_shot
+ macro m_check_start_shoot
         xor     a
         call    GTTRIG
         cp      0
@@ -34,7 +34,7 @@ PLAYER_INC              EQU     2
         ld      a, [player_space_key_pressed]
         cp      1
 
-        call    add_new_player_shot
+        call    add_new_player_shoot
 
 .end_m_checkshoot
 
@@ -45,6 +45,8 @@ PLAYER_INC              EQU     2
 ; ::move_player
 ;=====================================
 move_player
+        m_check_start_shoot
+
         ld      bc, [player_y]
         ld      [player_previous_y], bc
 

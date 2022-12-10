@@ -77,7 +77,9 @@ player_inter_scroll_counter_y   #1
 ;===========================================
 ; entities vars
 ;===========================================
-MAX_NUMBER_OF_ENTITIES          EQU     15
+MAX_NUMBER_OF_DESTRUCTIBLES_ENTITIES    EQU     15
+MAX_NUMBER_OF_INDESTRUCTIBLES_ENTITIES  EQU     7
+MAX_NUMBER_OF_ENTITIES EQU MAX_NUMBER_OF_DESTRUCTIBLES_ENTITIES + MAX_NUMBER_OF_INDESTRUCTIBLES_ENTITIES
 DATA_SIZE_PER_ENTITY            EQU     13
 NOT_VISIBLE_MAX_TIME            EQU     250
 
@@ -170,6 +172,8 @@ sprites_attributes_eof          #1
 ;===========================================
 ; list_entities
 ;===========================================
-list_entities_data              #(MAX_NUMBER_OF_ENTITIES*DATA_SIZE_PER_ENTITY)
+list_destructible_entities_data    #(MAX_NUMBER_OF_DESTRUCTIBLES_ENTITIES*DATA_SIZE_PER_ENTITY)
+list_indestructible_entities_data  #(MAX_NUMBER_OF_INDESTRUCTIBLES_ENTITIES*DATA_SIZE_PER_ENTITY)
 list_entities_data_end          #1
-                        
+list_entities_data EQU list_destructible_entities_data
+

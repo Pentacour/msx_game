@@ -158,7 +158,7 @@ trate_gen_stopwalk
 
         push    ix
 
-        call    get_next_empty_entity_ix
+        call    get_next_empty_destructible_entity_ix
         ld      [ix+OFFSET_TYPE], 1 ;TODO Use constant
         ld      [ix+OFFSET_STATE], 0
         ld      [ix+OFFSET_STATE_COUNTER], 0
