@@ -31,6 +31,7 @@ init_game
 
         xor     a
         ld      [level], a
+        ld      [player_space_key_pressed], a
 
         ld      a, 22
         ld      [camera_tile_y_top], a

@@ -21,6 +21,7 @@
         include         "entities_core.asm"
         include         "entities_lib.asm"
         include         "entities.asm"
+        include         "shoots_lib.asm"
 
         include         "screen_core.asm"
         include         "support_core.asm"

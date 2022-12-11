@@ -32,9 +32,8 @@ PLAYER_INC              EQU     2
 
 .button_pressed
         ld      a, [player_space_key_pressed]
-        cp      1
-
-        call    add_new_player_shoot
+        cp      0
+        call    z, add_new_player_shoot
 
 .end_m_checkshoot
 
@@ -405,125 +404,11 @@ tmp_sp_2        db      20, 20, 4, 4
 ;::add_new_player_shoot
 ;====================================
 add_new_player_shoot
-/*
-        call  entity.get_next_empty_indestructible_in_game
-        ld    [hl], entity.k_entity_player_shoot
-        inc   hl
-        ld    [hl], 1 ;isvisible
-        inc   hl
-        ld    a, [mwork.player_direction]
-        cp    k_key_up
-        jp    z, .sup
-        cp    k_key_upright
-        jp    z, .supright
-        cp    k_key_right
-        jp    z, .sright
-        cp    k_key_downright
-        jp    z, .sdownright
-        cp    k_key_down
-        jp    z, .sdown
-        cp    k_key_downleft
-        jp    z, .sdownleft
-        cp    k_key_left
-        jp    z, .sleft
+        ld      a, 1
+        ld      [player_space_key_pressed], a
 
-.supleft
-    ld    a, [mwork.player_y]
-    add   7
-    ld    [hl], a
-    inc   hl
-    ld    a, [mwork.player_x]
-    ld    [hl], a
-    inc   hl
-    ld    [hl], -8
-    inc   hl
-    ld    [hl], -8
-    ret
-
-.sup
-    ld    a, [mwork.player_y]
-    ld    [hl], a
-    inc   hl
-    ld    a, [mwork.player_x]
-    ld    [hl], a
-    inc   hl
-    ld    [hl], -8
-    inc   hl
-    ld    [hl], 0
-    ret
-
-.supright
-    ld    a, [mwork.player_y]
-    add   7
-    ld    [hl], a
-    inc   hl
-    ld    a, [mwork.player_x]
-    ld    [hl], a
-    inc   hl
-    ld    [hl], -8
-    inc   hl
-    ld    [hl], 8
-    ret
-
-.sright
-    ld    a, [mwork.player_y]
-    add   3
-    ld    [hl], a
-    inc   hl
-    ld    a, [mwork.player_x]
-    ld    [hl], a
-    inc   hl
-    ld    [hl], 0
-    inc   hl
-    ld    [hl], 8
-    ret
-
-.sdownright
-    ld    a, [mwork.player_y]
-    ld    [hl], a
-    inc   hl
-    ld    a, [mwork.player_x]
-    ld    [hl], a
-    inc   hl
-    ld    [hl], 8
-    inc   hl
-    ld    [hl], 8
-    ret
-
-.sdown
-    ld    a, [mwork.player_y]
-    ld    [hl], a
-    inc   hl
-    ld    a, [mwork.player_x]
-    ld    [hl], a
-    inc   hl
-    ld    [hl], 8
-    inc   hl
-    ld    [hl], 0
-    ret
-
-.sdownleft
-    ld    a, [mwork.player_y]
-    ld    [hl], a
-    inc   hl
-    ld    a, [mwork.player_x]
-    ld    [hl], a
-    inc   hl
-    ld    [hl], 8
-    inc   hl
-    ld    [hl], -8
-    ret
-
-.sleft
-    ld    a, [mwork.player_y]
-    add   3
-    ld    [hl], a
-    inc   hl
-    ld    a, [mwork.player_x]
-    ld    [hl], a
-    inc   hl
-    ld    [hl], 0
-    inc   hl
-    ld    [hl], -8
-    ret
-*/
+        call    get_next_empty_indestructible_entity_ix
+        ld      [ix+OFFSET_TYPE], 4 ;TODO
+        ld      [ix+OFFSET_STATE], 0
+        ld      [ix+OFFSET_IS_VISIBLE], 1
+        ret
