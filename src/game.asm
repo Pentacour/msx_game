@@ -19,8 +19,8 @@ init_level_0
         ;ld      [ix+OFFSET_Y], 8*8
         ;ld      [ix+OFFSET_IS_VISIBLE], 1
         
-        call    get_next_empty_entity_ix
-        ld      [ix+OFFSET_TYPE], 3
+        call    get_next_empty_destructible_entity_ix
+        ld      [ix+OFFSET_TYPE], 1
         ld      [ix+OFFSET_STATE], 0
         ld      [ix+OFFSET_STATE_COUNTER], 0
         ld      [ix+OFFSET_X], 4*8

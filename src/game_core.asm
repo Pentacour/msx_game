@@ -31,6 +31,8 @@ init_game
 
         xor     a
         ld      [level], a
+        ld      [player_space_key_pressed], a
+        ld      [debug_number_of_indestructibles], a
 
         ld      a, 22
         ld      [camera_tile_y_top], a
@@ -57,6 +59,9 @@ init_level
         ld      [player_attack_counter], a
         ld      [player_attacking_no_move], a
         ld      [player_inter_scroll_counter_x], a
+
+        ld      a, KEY_RIGHT
+        ld      [player_direction], a
 
         call    reset_entities
 
