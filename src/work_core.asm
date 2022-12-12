@@ -170,6 +170,11 @@ sprites_attributes	        #(4*MAX_NUMBER_OF_SPRITES)		; y, x, pattern, color
 sprites_attributes_eof          #1
 
 
+;============================================
+; debug vars
+;============================================
+debug_number_of_indestructibles  #1
+
 
 ;===========================================
 ; list_entities

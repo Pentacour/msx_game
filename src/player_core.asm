@@ -52,6 +52,11 @@ move_player
         ld      a, 0
         call    GTSTCK
 
+        cp      0
+        ret     z
+
+        ld      [player_direction], a
+
         cp      KEY_UPRIGHT
         jp      z, TrateUpRightKey
         cp      KEY_RIGHT
