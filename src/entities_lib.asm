@@ -143,7 +143,7 @@ trate_stopwalk
 ;===============================
 trate_gen_stopwalk
 
-.PERIOD_TIME    equ     60
+.PERIOD_TIME    equ     40
         ld      a, [ix+OFFSET_IS_VISIBLE]
         cp      0
         jp      z, next_entity 
@@ -163,7 +163,7 @@ trate_gen_stopwalk
         push    ix
 
         call    get_next_empty_destructible_entity_ix
-        ld      [ix+OFFSET_TYPE], 1 ;TODO Use constant
+        ld      [ix+OFFSET_TYPE], ENTITY_STOPWALK
         ld      [ix+OFFSET_STATE], 0
         ld      [ix+OFFSET_STATE_COUNTER], 0
         ld      [ix+OFFSET_X], 31*8
@@ -172,7 +172,7 @@ trate_gen_stopwalk
 
         pop     ix
 
-        ld      [ix+OFFSET_STATE_COUNTER], a
+        ld      [ix+OFFSET_STATE_COUNTER], 0
         jp      next_entity
         
 .render

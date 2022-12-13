@@ -333,5 +333,58 @@ scroll_entities
     pop   ix
     ret
 
+;====================================
+;::init_entities_level
+;   in-> a:level
+;====================================
+init_entities_level
+        sla     a
+        ld      c, a
+        ld      b, 0
+        ld      hl, init_entities_data
+        add     hl, bc
+
+        ld      e, [hl]
+        inc     hl
+        ld      d, [hl]
+        ex      de, hl
+
+.loop
+        ld      a, [hl]
+        cp      EOF
+        ret     z
+
+        call    get_next_empty_indestructible_entity_ix_save_hl
+        ld      a, [hl]
+        ld      [ix+OFFSET_TYPE], a
+        inc     hl
+        ld      a, [hl]
+        ld      [ix+OFFSET_MAP_Y], a
+        inc     hl
+        ld      a, [hl]
+        ld      [ix+OFFSET_MAP_X], a
+        inc     hl
+        ld      a, [hl]
+        ld      [ix+OFFSET_X], a
+        inc     hl
+        ld      a, [hl]
+        ld      [ix+OFFSET_Y], a
+
+        ld      [ix+OFFSET_STATE], 0
+        ld      [ix+OFFSET_STATE_COUNTER], 0
+        ld      [ix+OFFSET_IS_VISIBLE], 0
+
+        inc     hl
+        jp      .loop
+
+        ret
 
 
+;================================================
+;::get_next_empty_indestructible_entity_ix_save_hl
+;================================================
+get_next_empty_indestructible_entity_ix_save_hl
+        push    hl
+        call    get_next_empty_indestructible_entity_ix
+        pop     hl
+        ret

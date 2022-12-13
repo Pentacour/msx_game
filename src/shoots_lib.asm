@@ -12,8 +12,8 @@ trate_shoot_simple
         jp      z, .create_shoot
 
         ld      a, [animation_tick]
-        and     7
-        cp      7
+        and     3
+        cp      3
         jp      nz, .render
 
                 ; Move
