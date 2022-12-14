@@ -1,5 +1,5 @@
 ;================================
-;::trate_stopwalk
+;::trate_stopwalk_START
 ;  in-> ix: entity vars.
 ;===============================
 trate_stopwalk
@@ -135,10 +135,12 @@ trate_stopwalk
         ld      [hl], a 
 
         jp      next_entity
-
+;====================        
+;::trate_stopwalk_END
+;====================
 
 ;================================
-;::trate_gen_stopwalk
+;::trate_gen_stopwalk_START
 ;  in-> ix: entity vars.
 ;===============================
 trate_gen_stopwalk
@@ -185,10 +187,12 @@ trate_gen_stopwalk
         ld      [hl], a
 
         jp      next_entity
-
+;========================
+;::trate_gen_stopwalk_END
+;========================
 
 ;================================
-;::trate_stopsearch
+;::trate_stopsearch_START
 ;  in-> ix: entity vars.
 ;===============================
 trate_stopsearch
@@ -347,78 +351,8 @@ trate_stopsearch
         ld      [hl], a 
 
         jp      next_entity
+;======================
+;::trate_stopsearch_END
+;======================
 
 
-;=================================
-;::where_is_player
-;  OUT: a: K_position
-;=================================
-where_is_player
-        ld      a, [player_x]
-        sub     8
-        cp      [ix+OFFSET_X]
-        jr      nc, .is_right
-        add     16
-        cp      [ix+OFFSET_X]
-        jp      c, .is_left
-
-                ; Same X
-        ld      a, KEY_DOWN
-        ret
-
-.is_left
-        ld      a, [player_y]
-        sub     8
-        cp      [ix+OFFSET_Y]
-        jp      nc, .is_left_down
-        add     8
-        cp      [ix+OFFSET_Y]
-        jp      c, .is_left_up
-
-        ld      a, KEY_LEFT
-        ret
-
-.is_left_down
-        ld      a, KEY_DOWNLEFT
-        ret
-.is_left_up
-        ld      a, KEY_UPLEFT
-        ret
-
-.is_right
-        ld      a, [player_y]
-        sub     8
-        cp      [ix+OFFSET_Y]
-        jp      nc, .is_right_down
-        add     8
-        cp      [ix+OFFSET_Y]
-        jp      c, .is_right_up
-
-        ld      a, KEY_RIGHT
-        ret
-
-.is_right_down
-        ld      a, KEY_DOWNRIGHT
-        ret
-.is_right_up
-        ld      a, KEY_UPRIGHT
-        ret
-
-
-
-        ld      a, KEY_RIGHT
-        ret
-        
-
-
-;=================================
-;::inc_not_visible_counter
-;=================================
-inc_not_visible_counter
-        inc     [ix+OFFSET_NO_VISIBLE_COUNTER]
-        ld      a, [ix+OFFSET_NO_VISIBLE_COUNTER]
-        cp      NOT_VISIBLE_MAX_TIME
-        jp      nz, next_entity
-
-        ld      [ix+OFFSET_TYPE], 0
-        jp      next_entity

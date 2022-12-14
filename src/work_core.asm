@@ -7,6 +7,8 @@ MAX_LIFE                        equ     8
 DESTRUCTIBLE                    equ     0
 INDESTRUCTIBLE                  equ     1
 
+INIT_TYPE_0                     equ     0
+
 ;============================================
 ; static sprites pattern in vram
 ;============================================

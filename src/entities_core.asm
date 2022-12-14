@@ -349,43 +349,37 @@ init_entities_level
         ld      d, [hl]
         ex      de, hl
 
-.loop
+init_entities_level_loop
         ld      a, [hl]
         cp      EOF
         ret     z
 
         cp      DESTRUCTIBLE
-        jp      z, .destructible
+        jp      z, init_entities_level_destructible
 
         call    get_next_empty_indestructible_entity_ix_save_hl
-        jr      .post_get_next_empty
+        jr      init_entities_level_post_get_next_empty
 
-.destructible
+init_entities_level_destructible
         call    get_next_empty_destructible_entity_ix_save_hl
 
-.post_get_next_empty
+init_entities_level_post_get_next_empty
         inc     hl
         ld      a, [hl]
-        ld      [ix+OFFSET_TYPE], a
         inc     hl
-        ld      a, [hl]
-        ld      [ix+OFFSET_MAP_Y], a
-        inc     hl
-        ld      a, [hl]
-        ld      [ix+OFFSET_MAP_X], a
-        inc     hl
-        ld      a, [hl]
-        ld      [ix+OFFSET_X], a
-        inc     hl
-        ld      a, [hl]
-        ld      [ix+OFFSET_Y], a
+        cp      INIT_TYPE_0
+        jp      z, init_entity_type_1
+        
+init_entities_level_assert jp      init_entities_level_assert
+
+post_init_entity_type
 
         ld      [ix+OFFSET_STATE], 0
         ld      [ix+OFFSET_STATE_COUNTER], 0
         ld      [ix+OFFSET_IS_VISIBLE], 0
 
         inc     hl
-        jp      .loop
+        jp      init_entities_level_loop
 
         ret
 
@@ -407,3 +401,95 @@ get_next_empty_destructible_entity_ix_save_hl
         call    get_next_empty_destructible_entity_ix
         pop     hl
         ret
+
+;=================================
+;::where_is_player
+;  OUT: a: K_position
+;=================================
+where_is_player
+        ld      a, [player_x]
+        sub     8
+        cp      [ix+OFFSET_X]
+        jr      nc, .is_right
+        add     16
+        cp      [ix+OFFSET_X]
+        jp      c, .is_left
+
+                ; Same X
+        ld      a, KEY_DOWN
+        ret
+
+.is_left
+        ld      a, [player_y]
+        sub     8
+        cp      [ix+OFFSET_Y]
+        jp      nc, .is_left_down
+        add     8
+        cp      [ix+OFFSET_Y]
+        jp      c, .is_left_up
+
+        ld      a, KEY_LEFT
+        ret
+
+.is_left_down
+        ld      a, KEY_DOWNLEFT
+        ret
+.is_left_up
+        ld      a, KEY_UPLEFT
+        ret
+
+.is_right
+        ld      a, [player_y]
+        sub     8
+        cp      [ix+OFFSET_Y]
+        jp      nc, .is_right_down
+        add     8
+        cp      [ix+OFFSET_Y]
+        jp      c, .is_right_up
+
+        ld      a, KEY_RIGHT
+        ret
+
+.is_right_down
+        ld      a, KEY_DOWNRIGHT
+        ret
+.is_right_up
+        ld      a, KEY_UPRIGHT
+        ret
+
+
+
+        ld      a, KEY_RIGHT
+        ret
+        
+;=================================
+;::inc_not_visible_counter
+;=================================
+inc_not_visible_counter
+        inc     [ix+OFFSET_NO_VISIBLE_COUNTER]
+        ld      a, [ix+OFFSET_NO_VISIBLE_COUNTER]
+        cp      NOT_VISIBLE_MAX_TIME
+        jp      nz, next_entity
+
+        ld      [ix+OFFSET_TYPE], 0
+        jp      next_entity
+
+;================================
+;::init_entity_type_1
+;================================
+init_entity_type_1
+        ld      a, [hl]
+        ld      [ix+OFFSET_TYPE], a
+        inc     hl
+        ld      a, [hl]
+        ld      [ix+OFFSET_MAP_Y], a
+        inc     hl
+        ld      a, [hl]
+        ld      [ix+OFFSET_MAP_X], a
+        inc     hl
+        ld      a, [hl]
+        ld      [ix+OFFSET_X], a
+        inc     hl
+        ld      a, [hl]
+        ld      [ix+OFFSET_Y], a
+        jp      post_init_entity_type
