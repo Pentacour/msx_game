@@ -65,16 +65,25 @@ init_level
 
         call    reset_entities
 
+        call    init_tileset
+
         ld      a, [level]
-        cp      0
-        jp      z, init_level_0
+        sla     a
+        ld      c, a
+        ld      b, 0
+        ld      hl, map_data
+        add     hl, bc
 
-        cp      1
-        jp      z, init_level_1
+        ld      e, [hl]
+        inc     hl
+        ld      d, [hl]
+        ex      de, hl
 
-.assert 
-        jr .assert
-        
+        call    build_level
+        call    reset_entities
+        call    init_entities_level
+
+        ret
 
 
 
@@ -157,7 +166,7 @@ ChangeLevel
         ld      a, 8
         ld      [player_x], a
         inc     hl
-        jp      InitLevel
+        jp      change_level
 
 .TrateLeft
         ld      a, [level]
@@ -179,22 +188,18 @@ ChangeLevel
         ld      a, 248
         ld      [player_x], a
         dec     hl
-        jp      InitLevel
+        jp      change_level
 
 
 .assert jr .assert
 
 
 ;==================================
-;::InitLevel
+;::change_level
 ;       IN-> hl point to new level
 ;==================================
-InitLevel
+change_level
         ld      a, [hl]
         ld      [level], a
-
-        cp      0
-        jp      z, init_level_0
-        cp      1
-        jp      z, init_level_1
+        jp      init_level
 
