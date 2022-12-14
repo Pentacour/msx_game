@@ -4,7 +4,8 @@ MAX_NUMBER_OF_SPRITES           equ     10
 EOF                             equ 	254
 NEG_VALUE                       equ     100
 MAX_LIFE                        equ     8
-
+DESTRUCTIBLE                    equ     0
+INDESTRUCTIBLE                  equ     1
 
 ;============================================
 ; static sprites pattern in vram

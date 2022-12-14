@@ -354,7 +354,17 @@ init_entities_level
         cp      EOF
         ret     z
 
+        cp      DESTRUCTIBLE
+        jp      z, .destructible
+
         call    get_next_empty_indestructible_entity_ix_save_hl
+        jr      .post_get_next_empty
+
+.destructible
+        call    get_next_empty_destructible_entity_ix_save_hl
+
+.post_get_next_empty
+        inc     hl
         ld      a, [hl]
         ld      [ix+OFFSET_TYPE], a
         inc     hl
@@ -380,11 +390,20 @@ init_entities_level
         ret
 
 
-;================================================
+;=================================================
 ;::get_next_empty_indestructible_entity_ix_save_hl
-;================================================
+;=================================================
 get_next_empty_indestructible_entity_ix_save_hl
         push    hl
         call    get_next_empty_indestructible_entity_ix
+        pop     hl
+        ret
+
+;=================================================
+;::get_next_empty_destructible_entity_ix_save_hl
+;=================================================
+get_next_empty_destructible_entity_ix_save_hl
+        push    hl
+        call    get_next_empty_destructible_entity_ix
         pop     hl
         ret
