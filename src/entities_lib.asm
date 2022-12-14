@@ -1,5 +1,9 @@
+; Not compiled with project. It will be in msx_gen app that will copy
+; only needed functions in entities.asm
+
+;ENTITY_STOPWALK_START_FUNC
 ;================================
-;::trate_stopwalk_START
+;::trate_stopwalk
 ;  in-> ix: entity vars.
 ;===============================
 trate_stopwalk
@@ -135,12 +139,11 @@ trate_stopwalk
         ld      [hl], a 
 
         jp      next_entity
-;====================        
-;::trate_stopwalk_END
-;====================
+;ENTITY_STOPWALK_END_FUNC        
 
+;ENTITY_GEN_STOPWALK_START_FUNC
 ;================================
-;::trate_gen_stopwalk_START
+;::trate_gen_stopwalk
 ;  in-> ix: entity vars.
 ;===============================
 trate_gen_stopwalk
@@ -187,12 +190,11 @@ trate_gen_stopwalk
         ld      [hl], a
 
         jp      next_entity
-;========================
-;::trate_gen_stopwalk_END
-;========================
+;ENTITY_GEN_STOPWALK_END_FUNC
 
+;ENTITY_STOPSEARCH_START_FUNC
 ;================================
-;::trate_stopsearch_START
+;::trate_stopsearch
 ;  in-> ix: entity vars.
 ;===============================
 trate_stopsearch
@@ -351,8 +353,6 @@ trate_stopsearch
         ld      [hl], a 
 
         jp      next_entity
-;======================
-;::trate_stopsearch_END
-;======================
+;ENTITY_STOPSEARCH_END_FUNC
 
 

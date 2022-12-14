@@ -413,7 +413,7 @@ add_new_player_shoot
         ld      [player_space_key_pressed], a
 
         call    get_next_empty_indestructible_entity_ix
-        ld      [ix+OFFSET_TYPE], 4 ;TODO
+        ld      [ix+OFFSET_TYPE], ENTITY_SHOOT_SIMPLE
         ld      [ix+OFFSET_STATE], 0
         ld      [ix+OFFSET_IS_VISIBLE], 1
         ret
