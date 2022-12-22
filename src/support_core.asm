@@ -262,10 +262,7 @@ get_next_index_sprite
                 ld      a, [de]
                 cp      EOF
                 ret     nz
-
-                ld      de, sprites_attributes
-                ld      [current_sprites_index], de
-                ret
+.assert jp .assert
 
 ;========================================
 ;::load_sprites

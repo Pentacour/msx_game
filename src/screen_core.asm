@@ -51,9 +51,13 @@ render
 
 
         ;render sprites
-        ld      hl, SPRITE_GIRL_0 ;[player_pattern]
+        ld      hl, sprites_patterns_player
         ld      de, SPRTBL
         call    setvramadd
+        ld      b, 16
+        call    ufldirvm_16
+        ld      b, 16
+        call    ufldirvm_16
         ld      b, 16
         call    ufldirvm_16
         ld      b, 16

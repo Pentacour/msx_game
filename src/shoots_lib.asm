@@ -45,16 +45,6 @@ trate_shoot_simple
         xor     a
         ld      [hl], a
 
-        ;;;;;; debug
-        ;ld      a, [debug_number_of_indestructibles]
-        ;ld      b, 0
-        ;ld      c, a
-        ;ld      hl, camera_view+32*4
-        ;add     hl, bc
-        ;xor     a
-        ;ld      [hl], a
-        ;;;;;;;;;
-
         jp      next_entity
 
 .create_shoot
@@ -128,10 +118,6 @@ trate_shoot_simple
         jp      .render
 
 .quit_entity ;TODO
-        ld      a, [debug_number_of_indestructibles]
-        dec     a
-        ld      [debug_number_of_indestructibles], a
-
         ld      [ix+OFFSET_TYPE], 0
         jp      next_entity
         

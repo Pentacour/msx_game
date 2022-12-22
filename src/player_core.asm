@@ -46,6 +46,9 @@ PLAYER_INC              EQU     2
 move_player
         m_check_start_shoot
 
+        xor     a
+        ld      [player_key_pressed], a
+
         ld      bc, [player_y]
         ld      [player_previous_y], bc
 
@@ -56,6 +59,7 @@ move_player
         ret     z
 
         ld      [player_direction], a
+        ld      [player_key_pressed], a
 
         cp      KEY_UPRIGHT
         jp      z, TrateUpRightKey
@@ -383,27 +387,69 @@ LoadLevelLeft
         ret
 
 ;================================
-;::SetPlayerFrame
+;::set_player_frame
 ;================================
-SetPlayerFrame
-        ld      de, sprites_attributes
-        ld      hl, tmp_sp_1
-        ld      bc, 8
-        ldir
-
+set_player_frame
+        ld      hl, sprites_attributes
         ld      a, [player_y]
-        sub     8 
-        ld      [sprites_attributes], a
+        sub     8
+        ld      b, a
+        ld      [hl], a
+        inc     hl
         ld      a, [player_x]
         sub     8
-        ld      [sprites_attributes+1], a
+        ld      c, a
+        ld      [hl], a
+        inc     hl
+        ld      [hl], 0 ;Pattern 2
+        inc     hl
+        ld      [hl], 6 ;Color  2
+        inc     hl
+
+        ld      a, b
+        ld      [hl], b ; Y 2
+        inc     hl
+        ld      a, c    ; X 2
+        ld      [hl], a
+        inc     hl
+        ld      [hl], 4 ;Pattern 2
+        inc     hl
+        ld      [hl], 15 ;Color 2
+
+        ; Patterns
+        ld      a, [player_direction]
+        dec     a
+        ld      l, a
+        ld      h, 0
+        add     hl, hl
+        add     hl, hl
+        add     hl, hl
+        add     hl, hl
+        add     hl, hl
+        add     hl, hl
+        add     hl, hl
+
+        ld      a, [player_key_pressed]
+        cp      KEY_NO_KEY
+        jp      z, .set_patterns
+
+        ld      a, [animation_tick]
+        and     8
+        cp      0
+        jp      z, .set_patterns
+
+        ld      bc, 64
+        add     hl, bc
+
+.set_patterns
+        ld      bc, sprites_player_definition
+        add     hl, bc
+        
+        ld      de, sprites_patterns_player
+        ld      bc, 32*2
+        ldir
 
         ret
-
-
-tmp_sp_1        db      20, 20, 0, 8
-tmp_sp_2        db      20, 20, 4, 4
-
 
 ;====================================
 ;::add_new_player_shoot
@@ -417,3 +463,4 @@ add_new_player_shoot
         ld      [ix+OFFSET_STATE], 0
         ld      [ix+OFFSET_IS_VISIBLE], 1
         ret
+

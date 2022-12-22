@@ -171,7 +171,8 @@ current_sprites_index           #2
 start_sprites_index             #2
 sprites_attributes	        #(4*MAX_NUMBER_OF_SPRITES)		; y, x, pattern, color
 sprites_attributes_eof          #1
-
+sprites_patterns                
+sprites_patterns_player         #32*2
 
 ;============================================
 ; debug vars

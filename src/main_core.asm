@@ -74,7 +74,7 @@ game_loop
         call    move_player
         call    update_camera
         call    trate_entities
-        call    SetPlayerFrame
+        call    set_player_frame
         call    render
 
         jp      game_loop
