@@ -23,7 +23,8 @@
         include         "entities.asm"
         include         "entities_levels.asm"
         include         "shoots_lib.asm"
-
+        include         "shoots_core.asm"
+        
         include         "screen_core.asm"
         include         "support_core.asm"
         include         "core_unpack.asm"

@@ -87,13 +87,13 @@ DATA_SIZE_PER_ENTITY            EQU     13
 NOT_VISIBLE_MAX_TIME            EQU     250
 
 OFFSET_TYPE                     EQU     0 ;
-OFFSET_STATE                    EQU     1 ;
-OFFSET_STATE_COUNTER            EQU     2 ;
-OFFSET_Y                        EQU     3 ;
-OFFSET_X                        EQU     4 ;
-OFFSET_INC_Y                    EQU     5 ;
-OFFSET_INC_X                    EQU     6 ;
-OFFSET_IS_VISIBLE               EQU     7 ;
+OFFSET_IS_VISIBLE               EQU     1 ;
+OFFSET_Y                        EQU     2 ;
+OFFSET_X                        EQU     3 ;
+OFFSET_STATE                    EQU     4 ;
+OFFSET_STATE_COUNTER            EQU     5 ;
+OFFSET_INC_Y                    EQU     6 ;
+OFFSET_INC_X                    EQU     7 ;
 OFFSET_MAP_X                    EQU     8 ; Stores X map position when PNC goes out of the screen
 OFFSET_MAP_Y                    EQU     9 ; Stores Y map position when PNC goes out of the screen
 OFFSET_NO_VISIBLE_COUNTER       EQU     10 ;
@@ -129,6 +129,7 @@ param_can_go_x                  #1
 scroll_entities_direction       #1
 prev_y                          #1
 prev_x                          #1
+check_colision_pos              #2
 
 ;============================================
 ; screen vars

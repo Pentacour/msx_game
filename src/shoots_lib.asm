@@ -36,6 +36,9 @@ trate_shoot_simple
         call    check_if_valid_position_entity
         jp      nz, .quit_entity
         
+        call    check_if_player_shoot_hit
+        jp      z, .quit_entity
+
 .render
         ld      b, [ix+OFFSET_X]
         ld      c, [ix+OFFSET_Y]
@@ -48,10 +51,6 @@ trate_shoot_simple
         jp      next_entity
 
 .create_shoot
-        ld      a, [debug_number_of_indestructibles]
-        inc     a
-        ld      [debug_number_of_indestructibles], a
-
         ld      a, [player_x]
         ld      [ix+OFFSET_X], a
         ld      a, [player_y]
