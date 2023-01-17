@@ -64,18 +64,14 @@ main_post_init_level
 
 
 game_loop               
-;        xor     a
-;        ld      [camera_changed], a
-
-;        MF1PAUSE
         ld      a, [animation_tick]
         inc     a
         ld      [animation_tick], a
 
         call    move_player
+        call    set_player_frame
         call    update_camera
         call    trate_entities
-        call    set_player_frame
         call    render
 
         jp      game_loop

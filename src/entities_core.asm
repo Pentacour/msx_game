@@ -493,3 +493,70 @@ init_entity_type_1
         ld      a, [hl]
         ld      [ix+OFFSET_Y], a
         jp      post_init_entity_type
+
+
+;====================================
+;::is_collision_player_entity
+;    in-> de player [yx], ix
+;    out->z collision
+;=====================================
+is_collision_player_entity   
+.PLAYER_WIDTH equ 4
+.ENTITY_WIDTH equ 4
+        push    ix
+        pop     hl
+        inc     hl
+        inc     hl      ;y
+        
+        ld      a, -.PLAYER_WIDTH
+        add     e
+        ld      e, a
+        ld      a, .ENTITY_WIDTH
+        add     [hl] ;y
+        cp      e
+        jp      c, .ret_no
+
+        ld      a, .PLAYER_WIDTH*2
+        add     e
+        ld      e, a
+        ld      a, -.ENTITY_WIDTH*2
+        add     [hl] ;y
+        cp      e
+        jp      nc, .ret_no
+
+        ;x
+        inc     hl 
+        ld      a, -.PLAYER_WIDTH
+        add     d
+        ld      d, a
+        ld      a, .ENTITY_WIDTH
+        add     [hl] ;x
+        cp      d
+        jp      c, .ret_no
+
+        ld      a, .PLAYER_WIDTH*2
+        add     d
+        ld      d, a
+        ld      a, -.ENTITY_WIDTH*2
+        add     [hl] ;x
+        cp      d
+        jp      nc, .ret_no
+
+.ret_yes
+        xor     a
+        cp      0
+        ret
+.ret_no
+        xor     a
+        cp      1
+        ret  
+
+
+
+
+;=================================
+;::trate_collision_player_entity
+;=================================
+trate_collision_player_entity
+.assert   jr .assert
+
