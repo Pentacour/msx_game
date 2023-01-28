@@ -34,10 +34,10 @@ init_game
         ld      [player_space_key_pressed], a
         ld      [debug_number_of_indestructibles], a
 
-        ld      a, 22
+        ld      a, 10
         ld      [camera_tile_y_top], a
 
-        ld      a, 32
+        ld      a, 10
         ld      [camera_tile_x_left], a
 
         ld      bc, 5*8*256+15*8
