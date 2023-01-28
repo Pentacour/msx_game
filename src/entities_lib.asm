@@ -13,7 +13,6 @@ trate_stopwalk
 .STOP_TIME      equ     5
 .STATE_STOPPED  equ     0
 .STATE_WALKING  equ     1
-
         ld      a, [ix+OFFSET_IS_VISIBLE]
         cp      0
         jp      z, inc_not_visible_counter
@@ -28,9 +27,9 @@ trate_stopwalk
         jp      z, .trate_stopped
 
 .trate_walking
-        ld      de, player_y]
+        ld      de, [player_y]
         call    is_collision_player_entity
-        jp      z, trate_colision_player_entity
+        jp      z, trate_collision_player_entity
 
         inc     [ix+OFFSET_STATE_COUNTER]
         ld      a, [ix+OFFSET_STATE_COUNTER]
@@ -92,13 +91,15 @@ trate_stopwalk
         inc     [ix+OFFSET_STATE_COUNTER]
         ld      a, [ix+OFFSET_STATE_COUNTER]
         cp      .STOP_TIME
-        jr      z, .change_state_walking
-        jp      .render
+        jp      nz, .render
 
-.change_state_walking
         ld      [ix+OFFSET_STATE_COUNTER], 0
         ld      [ix+OFFSET_STATE], .STATE_WALKING
 
+        jr      .change_state_walking
+        jp      .render
+
+.change_state_walking
         ld      a, [animation_tick]
         cp      64
         jp      c, .change_up
@@ -125,6 +126,26 @@ trate_stopwalk
         ld      [ix+OFFSET_INC_Y], .WALK_INC
         ld      [ix+OFFSET_INC_X], 0
         jr      .render
+
+.change_up_left
+        ld      [ix+OFFSET_INC_Y], -.WALK_INC
+        ld      [ix+OFFSET_INC_X], -.WALK_INC
+        jp      .render
+
+.change_up_right
+        ld      [ix+OFFSET_INC_X], .WALK_INC
+        ld      [ix+OFFSET_INC_Y], -.WALK_INC
+        jp      .render
+
+.change_down_right
+        ld      [ix+OFFSET_INC_X], .WALK_INC
+        ld      [ix+OFFSET_INC_Y], .WALK_INC
+        jp      .render
+
+.change_down_left
+        ld      [ix+OFFSET_INC_Y], .WALK_INC
+        ld      [ix+OFFSET_INC_X], -.WALK_INC
+        jp      .render
 
 .render
         ld      b, [ix+OFFSET_X]
@@ -196,19 +217,14 @@ trate_gen_stopwalk
         jp      next_entity
 ;ENTITY_GEN_STOPWALK_END_FUNC
 
-;ENTITY_STOPSEARCH_START_FUNC
+;ENTITY_FOLLOW_PLAYER_START_FUNC
 ;================================
-;::trate_stopsearch
+;::trate_followplayer
 ;  in-> ix: entity vars.
 ;===============================
-trate_stopsearch
+trate_followplayer
 
 .WALK_INC       equ     8
-.WALK_TIME      equ     20
-.STOP_TIME      equ     5
-.STATE_STOPPED  equ     0
-.STATE_WALKING  equ     1
-
         ld      a, [ix+OFFSET_IS_VISIBLE]
         cp      0
         jp      z, inc_not_visible_counter
@@ -217,67 +233,6 @@ trate_stopsearch
         and     15
         cp      15
         jp      nz, .render
-
-        ld      a, [ix+OFFSET_STATE]
-        cp      .STATE_STOPPED
-        jp      z, .trate_stopped
-
-.trate_walking
-        inc     [ix+OFFSET_STATE_COUNTER]
-        ld      a, [ix+OFFSET_STATE_COUNTER]
-        cp      .WALK_TIME
-        jr      z, .change_state_stopped
-
-        ld      a, [ix+OFFSET_X]
-        ld      [prev_x], a
-        add     [ix+OFFSET_INC_X]
-        ld      [ix+OFFSET_X], a
-
-        ld      a, [ix+OFFSET_Y]
-        ld      [prev_y], a
-        add     [ix+OFFSET_INC_Y]
-        ld      [ix+OFFSET_Y], a
-
-        call    check_if_valid_position_entity
-        jp      nz, .set_previous_position
-
-        ld      a, [ix+OFFSET_X]
-        cp      31*8+1
-        jp      nc, .set_previous_position
-
-        cp      8
-        jp      c, .set_previous_position
-
-        ld      a, [ix+OFFSET_Y]
-        cp      23*8
-        jp      nc, .set_previous_position
-
-        cp      8*2+8
-        jp      c, .set_previous_position
-
-        jp      .render
-
-.set_previous_position
-        ld      a, [prev_x]
-        ld      [ix+OFFSET_X], a
-        ld      a, [prev_y]
-        ld      [ix+OFFSET_Y], a
-        jp      .change_state_stopped
-
-.change_state_stopped
-        ld      [ix+OFFSET_STATE_COUNTER], 0
-        ld      [ix+OFFSET_STATE], .STATE_STOPPED
-
-.trate_stopped
-        inc     [ix+OFFSET_STATE_COUNTER]
-        ld      a, [ix+OFFSET_STATE_COUNTER]
-        cp      .STOP_TIME
-        jr      z, .change_state_walking
-        jp      .render
-
-.change_state_walking
-        ld      [ix+OFFSET_STATE_COUNTER], 0
-        ld      [ix+OFFSET_STATE], .STATE_WALKING
 
         call    where_is_player
 
@@ -298,47 +253,69 @@ trate_stopsearch
         cp      KEY_DOWNRIGHT
         jp      z, .change_down_right
 
+
 .change_left
         ld      [ix+OFFSET_INC_X], -.WALK_INC
         ld      [ix+OFFSET_INC_Y], 0
-        jp      .render
+        jp      .move
 
 .change_up
         ld      [ix+OFFSET_INC_Y], -.WALK_INC
         ld      [ix+OFFSET_INC_X], 0
-        jp      .render
-
-.change_up_left
-        ld      [ix+OFFSET_INC_Y], -.WALK_INC
-        ld      [ix+OFFSET_INC_X], -.WALK_INC
-        jp      .render
+        jp      .move
 
 .change_right
         ld      [ix+OFFSET_INC_X], .WALK_INC
         ld      [ix+OFFSET_INC_Y], 0
-        jp      .render
-
-.change_up_right
-        ld      [ix+OFFSET_INC_X], .WALK_INC
-        ld      [ix+OFFSET_INC_Y], -.WALK_INC
-        jp      .render
-
-.change_down_right
-        ld      [ix+OFFSET_INC_X], .WALK_INC
-        ld      [ix+OFFSET_INC_Y], .WALK_INC
-        jp      .render
-
+        jp      .move
 
 .change_down
         ld      [ix+OFFSET_INC_Y], .WALK_INC
         ld      [ix+OFFSET_INC_X], 0
-        jp      .render
+        jp      .move
+
+.change_up_left
+        ld      [ix+OFFSET_INC_Y], -.WALK_INC
+        ld      [ix+OFFSET_INC_X], -.WALK_INC
+        jp      .move
+
+.change_up_right
+        ld      [ix+OFFSET_INC_X], .WALK_INC
+        ld      [ix+OFFSET_INC_Y], -.WALK_INC
+        jp      .move
+
+.change_down_right
+        ld      [ix+OFFSET_INC_X], .WALK_INC
+        ld      [ix+OFFSET_INC_Y], .WALK_INC
+        jp      .move
 
 .change_down_left
         ld      [ix+OFFSET_INC_Y], .WALK_INC
         ld      [ix+OFFSET_INC_X], -.WALK_INC
-        jp      .render
+        jp      .move
 
+
+.move
+        ld      a, [ix+OFFSET_X]
+        ld      [prev_x], a
+        ld      a, [ix+OFFSET_Y]
+        ld      [prev_y], a
+        
+        ld      a, [ix+OFFSET_INC_X]
+        add     [ix+OFFSET_X]
+        ld      [ix+OFFSET_X], a
+
+        ld      a, [ix+OFFSET_INC_Y]
+        add     [ix+OFFSET_Y]
+        ld      [ix+OFFSET_Y], a
+
+        call    check_if_valid_position_entity
+        jr      nz, .undo
+
+.check_collision
+        ld      de, [player_y]
+        call    is_collision_player_entity
+        jp      z, trate_collision_player_entity
 
 .render
         ld      b, [ix+OFFSET_X]
@@ -357,6 +334,12 @@ trate_stopsearch
         ld      [hl], a 
 
         jp      next_entity
-;ENTITY_STOPSEARCH_END_FUNC
+
+.undo
+        ld      bc, [prev_y]
+        ld      [ix+OFFSET_X], b
+        ld      [ix+OFFSET_Y], c
+        jr      .check_collision
+;ENTITY_FOLLOW_PLAYER_END_FUNC
 
 

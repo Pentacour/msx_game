@@ -1,11 +1,10 @@
 ENTITY_SHOOT_SIMPLE equ 1
 ENTITY_GEN_STOPWALK equ 2
 ENTITY_STOPWALK equ 3
-ENTITY_STOPSEARCH equ 4
-ENTITY_FOLLOWPLAYER equ 5
+ENTITY_FOLLOWPLAYER equ 4
 
 TRATE_ENTITIES_TABLE
-    dw 0, trate_shoot_simple,trate_gen_stopwalk,trate_stopwalk,trate_stopsearch,trate_followplayer
+    dw 0, trate_shoot_simple,trate_gen_stopwalk,trate_stopwalk,trate_followplayer
 
 ;================================
 ;::trate_gen_stopwalk
@@ -220,10 +219,9 @@ trate_stopwalk
         jp      next_entity
 
 ;================================
-;::trate_stopsearch, trate_followplayer
+;::trate_followplayer
 ;  in-> ix: entity vars.
 ;===============================
-trate_stopsearch
 trate_followplayer
 
 .WALK_INC       equ     8
