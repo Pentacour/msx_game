@@ -335,9 +335,9 @@ scroll_entities
 
 ;====================================
 ;::init_entities_level
-;   in-> a:level
 ;====================================
 init_entities_level
+        ld      a, [level]
         sla     a
         ld      c, a
         ld      b, 0

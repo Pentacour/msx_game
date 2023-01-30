@@ -340,3 +340,4 @@ trate_followplayer
         ld      [ix+OFFSET_X], b
         ld      [ix+OFFSET_Y], c
         jr      .check_collision
+
