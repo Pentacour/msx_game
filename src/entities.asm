@@ -198,41 +198,7 @@ trate_stopwalk
         jr      .render
 
 .render
-        ld      b, [ix+OFFSET_X]
-        ld      c, [ix+OFFSET_Y]
-        call    YXToOffset
-        ld      hl, camera_view
-        add     hl, de
-        ;;;
-        ld      a, [ix+OFFSET_DIRECTION]
-        dec     a
-        sla     a
-        sla     a
-        sla     a
-        add     96
-        ld      b, a ; save tile
-        ld      a, [animation_tick]
-        and     8
-        cp      0
-        jp      z, .setframe
-        inc     b
-        inc     b
-        inc     b
-        inc     b
-.setframe
-        ld      a, b
-        ld      [hl], a
-        inc     hl
-        inc     a
-        ld      [hl], a
-        ld      bc, 31
-        add     hl, bc
-        inc     a
-        ld      [hl], a
-        inc     hl
-        inc     a
-        ld      [hl], a
-
+        call    render_character
         jp      next_entity
 
 ;================================
@@ -343,41 +309,7 @@ trate_followplayer
         jp      z, trate_collision_player_entity
 
 .render
-        ld      b, [ix+OFFSET_X]
-        ld      c, [ix+OFFSET_Y]
-        call    YXToOffset
-        ld      hl, camera_view
-        add     hl, de
-        ;;;
-        ld      a, [ix+OFFSET_DIRECTION]
-        dec     a
-        sla     a
-        sla     a
-        sla     a
-        add     96
-        ld      b, a ; save tile
-        ld      a, [animation_tick]
-        and     8
-        cp      0
-        jp      z, .setframe
-        inc     b
-        inc     b
-        inc     b
-        inc     b
-.setframe
-        ld      a, b
-        ld      [hl], a
-        inc     hl
-        inc     a
-        ld      [hl], a
-        ld      bc, 31
-        add     hl, bc
-        inc     a
-        ld      [hl], a
-        inc     hl
-        inc     a
-        ld      [hl], a
-
+        call    render_character
         jp      next_entity
 
 .undo

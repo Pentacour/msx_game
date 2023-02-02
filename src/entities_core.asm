@@ -454,7 +454,23 @@ where_is_player
         jp      c, .is_left
 
                 ; Same X
+        ld      a, [player_y]
+        sub     8
+        cp      [ix+OFFSET_Y]
+        jp      nc, .is_down
+        add     16
+        cp      [ix+OFFSET_Y]
+        jp      c, .is_up
+
+        ld      a, KEY_NO_KEY
+        ret
+
+.is_down
         ld      a, KEY_DOWN
+        ret
+
+.is_up
+        ld      a, KEY_UP
         ret
 
 .is_left
@@ -462,7 +478,7 @@ where_is_player
         sub     8
         cp      [ix+OFFSET_Y]
         jp      nc, .is_left_down
-        add     8
+        add     16
         cp      [ix+OFFSET_Y]
         jp      c, .is_left_up
 
@@ -481,7 +497,7 @@ where_is_player
         sub     8
         cp      [ix+OFFSET_Y]
         jp      nc, .is_right_down
-        add     8
+        add     16
         cp      [ix+OFFSET_Y]
         jp      c, .is_right_up
 
@@ -493,11 +509,6 @@ where_is_player
         ret
 .is_right_up
         ld      a, KEY_UPRIGHT
-        ret
-
-
-
-        ld      a, KEY_RIGHT
         ret
         
 ;=================================
@@ -590,11 +601,64 @@ is_collision_player_entity
         ret  
 
 
-
-
 ;=================================
 ;::trate_collision_player_entity
 ;=================================
 trate_collision_player_entity
 .assert   jr .assert
 
+
+;================================
+;::render_character
+;  in->IX entity
+;================================
+render_character
+        ld      a, [ix+OFFSET_CHARACTER_TYPE]
+        cp      0
+        ret     z
+        cp      1
+        jp      render_character_1
+
+.assert jr      .assert        
+
+
+;================================
+;::render_character_1
+;================================
+render_character_1
+        ld      b, [ix+OFFSET_X]
+        ld      c, [ix+OFFSET_Y]
+        call    YXToOffset
+        ld      hl, camera_view
+        add     hl, de
+        
+        ld      a, [ix+OFFSET_DIRECTION]
+        dec     a
+        sla     a
+        sla     a
+        sla     a
+        add     96
+        ld      b, a ; save tile
+        ld      a, [animation_tick]
+        and     8
+        cp      0
+        jp      z, .setframe
+        inc     b
+        inc     b
+        inc     b
+        inc     b
+.setframe
+        ld      a, b
+        ld      [hl], a
+        inc     hl
+        inc     a
+        ld      [hl], a
+        ld      bc, 31
+        add     hl, bc
+        inc     a
+        ld      [hl], a
+        inc     hl
+        inc     a
+        ld      [hl], a
+
+        ret
