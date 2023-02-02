@@ -76,6 +76,7 @@ player_in_stair                 #1
 player_key_up_pressed           #1
 player_inter_scroll_counter_x   #1
 player_inter_scroll_counter_y   #1
+concurrent_shoots               #1
 
 ;===========================================
 ; entities vars
@@ -97,6 +98,8 @@ OFFSET_INC_X                    EQU     7 ;
 OFFSET_MAP_X                    EQU     8 ; Stores X map position when PNC goes out of the screen
 OFFSET_MAP_Y                    EQU     9 ; Stores Y map position when PNC goes out of the screen
 OFFSET_NO_VISIBLE_COUNTER       EQU     10 ;
+OFFSET_CHARACTER_TYPE           EQU     11 ;
+OFFSET_DIRECTION                EQU     12 ;
 
 ;;;;;
 OFFSET_ID                       EQU 2

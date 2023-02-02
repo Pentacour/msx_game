@@ -349,6 +349,19 @@ init_entities_level
         ld      d, [hl]
         ex      de, hl
 
+        ; load entities characters
+
+        ld      e, [hl]
+        inc     hl
+        ld      d, [hl]
+        inc     hl
+        ex      de, hl
+        push    de
+
+        call    init_entity_character
+
+        pop     hl
+
 init_entities_level_loop
         ld      a, [hl]
         cp      EOF
@@ -364,6 +377,10 @@ init_entities_level_destructible
         call    get_next_empty_destructible_entity_ix_save_hl
 
 init_entities_level_post_get_next_empty
+        inc     hl      
+        ld      a, [hl] ; character type
+        ld      [ix+OFFSET_CHARACTER_TYPE], a
+
         inc     hl
         ld      a, [hl]
         inc     hl
@@ -380,6 +397,27 @@ post_init_entity_type
 
         inc     hl
         jp      init_entities_level_loop
+
+        ret
+
+;=================================================
+;::init_entity_character
+; in->hl pointer to character
+;=================================================
+init_entity_character
+        ld      e, [hl]
+        inc     hl
+        ld      d, [hl]
+        inc     hl
+        push    de    
+
+        ld      e, [hl]
+        inc     hl
+        ld      d, [hl]
+
+        pop     hl
+
+        call    load_tileset_character_1
 
         ret
 

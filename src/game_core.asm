@@ -1,4 +1,5 @@
-
+CHARACTER_1_OFFSET equ 96
+ 
 
 ;===========================================
 ;::init_game
@@ -59,11 +60,12 @@ init_level
         ld      [player_attack_counter], a
         ld      [player_attacking_no_move], a
         ld      [player_inter_scroll_counter_x], a
+        ld      [concurrent_shoots], a
 
         ld      a, KEY_RIGHT
         ld      [player_direction], a
 
-        call    reset_entities
+        ;call    reset_entities
 
         call    init_tileset
 
@@ -132,6 +134,55 @@ load_tileset_one_bank
         call    LDIRVM
 
         ret
+
+;==========================================
+;::load_tileset_character_1
+;   in->hl patterns
+;       de colors
+;==========================================
+load_tileset_character_1
+        push    de
+
+                ld      de, tmp_unzip
+                call    pletter_unpack
+
+                ld      hl, tmp_unzip
+                ld      de, CHRTBL + CHARACTER_1_OFFSET*8
+                ld      bc, 64*8
+                call    LDIRVM
+
+                ld      hl, tmp_unzip
+                ld      de, CHRTBL + CHARACTER_1_OFFSET*8 + 32*8*8
+                ld      bc, 64*8
+                call    LDIRVM
+
+                ld      hl, tmp_unzip
+                ld      de, CHRTBL+ CHARACTER_1_OFFSET*8 + 32*8*8*2
+                ld      bc, 64*8
+                call    LDIRVM
+
+        pop     hl
+
+        ld      de, tmp_unzip
+        call    pletter_unpack
+
+        ld      hl, tmp_unzip
+        ld      de, CLRTBL + CHARACTER_1_OFFSET*8
+        ld      bc, 64*8
+        call    LDIRVM
+
+        ld      hl, tmp_unzip
+        ld      de, CLRTBL + CHARACTER_1_OFFSET*8 + 32*8*8
+        ld      bc, 64*8
+        call    LDIRVM
+
+        ld      hl, tmp_unzip
+        ld      de, CLRTBL + CHARACTER_1_OFFSET*8 + 32*8*8*2
+        ld      bc, 64*8
+        call    LDIRVM
+
+        ret
+
 
 ;===============================
 ;::ChangeLevel

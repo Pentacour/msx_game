@@ -12,6 +12,7 @@ CHANGE_LEVEL_MIN_Y      EQU 3*8+1
 CHANGE_LEVEL_MAX_Y      EQU 22*8
 
 PLAYER_INC              EQU     2
+MAX_CONCURRENT_SHOOTS   EQU     4
 
 ;====================================
 ;::m_check_start_shoot
@@ -457,6 +458,13 @@ set_player_frame
 add_new_player_shoot
         ld      a, 1
         ld      [player_space_key_pressed], a
+
+        ld      a, [concurrent_shoots]
+        cp      MAX_CONCURRENT_SHOOTS
+        ret     z
+
+        inc     a
+        ld      [concurrent_shoots], a
 
         call    get_next_empty_indestructible_entity_ix
         ld      [ix+OFFSET_TYPE], ENTITY_SHOOT_SIMPLE

@@ -128,12 +128,28 @@ trate_stopwalk
 
         neg
         ld      [ix+OFFSET_INC_X], a
+
+        cp      0
+        jr      c, .left
+
+        ld      [ix+OFFSET_DIRECTION], KEY_RIGHT
+        jr      .trate_walking
+.left
+        ld      [ix+OFFSET_DIRECTION], KEY_LEFT
         jr      .trate_walking
 
 .turn_around_y
         ld      a, [ix+OFFSET_INC_Y]
         neg
         ld      [ix+OFFSET_INC_Y], a
+
+        cp      0
+        jr      c, .up
+
+        ld      [ix+OFFSET_DIRECTION], KEY_DOWN
+        jr      .check_turn_around_x
+.up
+        ld      [ix+OFFSET_DIRECTION], KEY_UP
         jr      .check_turn_around_x
 
 .change_state_stopped
@@ -149,9 +165,6 @@ trate_stopwalk
         ld      [ix+OFFSET_STATE_COUNTER], 0
         ld      [ix+OFFSET_STATE], .STATE_WALKING
 
-        jr      .change_state_walking
-        jp      .render
-
 .change_state_walking
         ld      a, [animation_tick]
         cp      64
@@ -163,42 +176,26 @@ trate_stopwalk
 .change_left
         ld      [ix+OFFSET_INC_X], -.WALK_INC
         ld      [ix+OFFSET_INC_Y], 0
+        ld      [ix+OFFSET_DIRECTION], KEY_LEFT
         jr      .render
 
 .change_up
         ld      [ix+OFFSET_INC_Y], -.WALK_INC
         ld      [ix+OFFSET_INC_X], 0
+        ld      [ix+OFFSET_DIRECTION], KEY_UP
         jr      .render
 
 .change_right
         ld      [ix+OFFSET_INC_X], .WALK_INC
         ld      [ix+OFFSET_INC_Y], 0
+        ld      [ix+OFFSET_DIRECTION], KEY_RIGHT
         jr      .render
 
 .change_down
         ld      [ix+OFFSET_INC_Y], .WALK_INC
         ld      [ix+OFFSET_INC_X], 0
+        ld      [ix+OFFSET_DIRECTION], KEY_DOWN
         jr      .render
-
-.change_up_left
-        ld      [ix+OFFSET_INC_Y], -.WALK_INC
-        ld      [ix+OFFSET_INC_X], -.WALK_INC
-        jp      .render
-
-.change_up_right
-        ld      [ix+OFFSET_INC_X], .WALK_INC
-        ld      [ix+OFFSET_INC_Y], -.WALK_INC
-        jp      .render
-
-.change_down_right
-        ld      [ix+OFFSET_INC_X], .WALK_INC
-        ld      [ix+OFFSET_INC_Y], .WALK_INC
-        jp      .render
-
-.change_down_left
-        ld      [ix+OFFSET_INC_Y], .WALK_INC
-        ld      [ix+OFFSET_INC_X], -.WALK_INC
-        jp      .render
 
 .render
         ld      b, [ix+OFFSET_X]
@@ -206,15 +203,35 @@ trate_stopwalk
         call    YXToOffset
         ld      hl, camera_view
         add     hl, de
-        xor     a
-        ld      [hl], a
-        dec     hl
-        ld      [hl], a
-        ld      bc, -32
-        add     hl, bc
+        ;;;
+        ld      a, [ix+OFFSET_DIRECTION]
+        dec     a
+        sla     a
+        sla     a
+        sla     a
+        add     96
+        ld      b, a ; save tile
+        ld      a, [animation_tick]
+        and     8
+        cp      0
+        jp      z, .setframe
+        inc     b
+        inc     b
+        inc     b
+        inc     b
+.setframe
+        ld      a, b
         ld      [hl], a
         inc     hl
-        ld      [hl], a 
+        inc     a
+        ld      [hl], a
+        ld      bc, 31
+        add     hl, bc
+        inc     a
+        ld      [hl], a
+        inc     hl
+        inc     a
+        ld      [hl], a
 
         jp      next_entity
 
@@ -257,41 +274,49 @@ trate_followplayer
 .change_left
         ld      [ix+OFFSET_INC_X], -.WALK_INC
         ld      [ix+OFFSET_INC_Y], 0
+        ld      [ix+OFFSET_DIRECTION], KEY_LEFT
         jp      .move
 
 .change_up
         ld      [ix+OFFSET_INC_Y], -.WALK_INC
         ld      [ix+OFFSET_INC_X], 0
+        ld      [ix+OFFSET_DIRECTION], KEY_UP
         jp      .move
 
 .change_right
         ld      [ix+OFFSET_INC_X], .WALK_INC
         ld      [ix+OFFSET_INC_Y], 0
+        ld      [ix+OFFSET_DIRECTION], KEY_RIGHT
         jp      .move
 
 .change_down
         ld      [ix+OFFSET_INC_Y], .WALK_INC
         ld      [ix+OFFSET_INC_X], 0
+        ld      [ix+OFFSET_DIRECTION], KEY_DOWN
         jp      .move
 
 .change_up_left
         ld      [ix+OFFSET_INC_Y], -.WALK_INC
         ld      [ix+OFFSET_INC_X], -.WALK_INC
+        ld      [ix+OFFSET_DIRECTION], KEY_UPLEFT
         jp      .move
 
 .change_up_right
         ld      [ix+OFFSET_INC_X], .WALK_INC
         ld      [ix+OFFSET_INC_Y], -.WALK_INC
+        ld      [ix+OFFSET_DIRECTION], KEY_UPRIGHT
         jp      .move
 
 .change_down_right
         ld      [ix+OFFSET_INC_X], .WALK_INC
         ld      [ix+OFFSET_INC_Y], .WALK_INC
+        ld      [ix+OFFSET_DIRECTION], KEY_DOWNRIGHT
         jp      .move
 
 .change_down_left
         ld      [ix+OFFSET_INC_Y], .WALK_INC
         ld      [ix+OFFSET_INC_X], -.WALK_INC
+        ld      [ix+OFFSET_DIRECTION], KEY_DOWNLEFT
         jp      .move
 
 
@@ -323,15 +348,35 @@ trate_followplayer
         call    YXToOffset
         ld      hl, camera_view
         add     hl, de
-        xor     a
-        ld      [hl], a
-        dec     hl
-        ld      [hl], a
-        ld      bc, -32
-        add     hl, bc
+        ;;;
+        ld      a, [ix+OFFSET_DIRECTION]
+        dec     a
+        sla     a
+        sla     a
+        sla     a
+        add     96
+        ld      b, a ; save tile
+        ld      a, [animation_tick]
+        and     8
+        cp      0
+        jp      z, .setframe
+        inc     b
+        inc     b
+        inc     b
+        inc     b
+.setframe
+        ld      a, b
         ld      [hl], a
         inc     hl
-        ld      [hl], a 
+        inc     a
+        ld      [hl], a
+        ld      bc, 31
+        add     hl, bc
+        inc     a
+        ld      [hl], a
+        inc     hl
+        inc     a
+        ld      [hl], a
 
         jp      next_entity
 

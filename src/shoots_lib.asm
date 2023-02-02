@@ -12,8 +12,8 @@ trate_shoot_simple
         jp      z, .create_shoot
 
         ld      a, [animation_tick]
-        and     3
-        cp      3
+        and     1
+        cp      1
         jp      nz, .render
 
                 ; Move
@@ -116,7 +116,11 @@ trate_shoot_simple
         ld      [ix+OFFSET_INC_Y], -.INCREMENT
         jp      .render
 
-.quit_entity ;TODO
+.quit_entity 
+        ld      a, [concurrent_shoots]
+        dec     a
+        ld      [concurrent_shoots], a
+
         ld      [ix+OFFSET_TYPE], 0
         jp      next_entity
         
