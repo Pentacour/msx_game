@@ -1,3 +1,6 @@
+CHARACTER_1     equ     1
+CHARACTER_2     equ     2
+
 ;=======================================
 ;::trate_entities
 ;========================================
@@ -378,7 +381,7 @@ init_entities_level_destructible
 
 init_entities_level_post_get_next_empty
         inc     hl      
-        ld      a, [hl] ; character type
+        ld      a, [hl] 
         ld      [ix+OFFSET_CHARACTER_TYPE], a
 
         inc     hl
@@ -614,8 +617,6 @@ trate_collision_player_entity
 ;================================
 render_character
         ld      a, [ix+OFFSET_CHARACTER_TYPE]
-        cp      0
-        ret     z
         cp      1
         jp      render_character_1
 

@@ -28,16 +28,21 @@ trate_gen_stopwalk
         jp      nz, .render
 
                 ; Generate a stopwalk entity
-
+        ld      a, [ix+OFFSET_CHARACTER_TYPE]
+        
         push    ix
+                push    af
+                        call    get_next_empty_destructible_entity_ix
+                        ld      [ix+OFFSET_TYPE], ENTITY_STOPWALK
+                        ld      [ix+OFFSET_STATE], 0
+                        ld      [ix+OFFSET_STATE_COUNTER], 0
+                        ld      [ix+OFFSET_X], 31*8
+                        ld      [ix+OFFSET_Y], 8*8
+                        ld      [ix+OFFSET_IS_VISIBLE], 1
+                        ld      [ix+OFFSET_DIRECTION], KEY_DOWN
+                pop     af
 
-        call    get_next_empty_destructible_entity_ix
-        ld      [ix+OFFSET_TYPE], ENTITY_STOPWALK
-        ld      [ix+OFFSET_STATE], 0
-        ld      [ix+OFFSET_STATE_COUNTER], 0
-        ld      [ix+OFFSET_X], 31*8
-        ld      [ix+OFFSET_Y], 8*8
-        ld      [ix+OFFSET_IS_VISIBLE], 1
+                ld      [ix+OFFSET_CHARACTER_TYPE], a
 
         pop     ix
 
