@@ -11,35 +11,35 @@ check_if_player_shoot_hit
         ld      b, MAX_NUMBER_OF_DESTRUCTIBLES_ENTITIES
 .loop
         push    bc
-        ld      a, [hl]
-        cp      0    
-        jp      z, .next
+                ld      a, [hl]
+                cp      0    
+                jp      z, .next
 
-        inc     hl  ;isvisible
-        ld      a, [hl]
-        cp      0
-        jp      z, .next_because_no_visible
-        inc     hl  ;y
-        ld      c, [hl]
-        inc     hl  ;x
-        ld      b, [hl]
-        ld      a, [ix]
- 
-        ld      de, [check_colision_pos] 
-        call    is_colision_player_shoot_entity
-        jp      z, .ret_yes
+                inc     hl  ;isvisible
+                ld      a, [hl]
+                cp      0
+                jp      z, .next_because_no_visible
+                inc     hl  ;y
+                ld      c, [hl]
+                inc     hl  ;x
+                ld      b, [hl]
+                ld      a, [ix]
+        
+                ld      de, [check_colision_pos] 
+                call    is_colision_player_shoot_entity
+                jp      z, .ret_yes
 
-        ld      bc, DATA_SIZE_PER_ENTITY-3
-        add     hl, bc
+                ld      bc, DATA_SIZE_PER_ENTITY-3
+                add     hl, bc
         pop     bc
         djnz    .loop
         jp      .exit
 
 .next_because_no_visible
-        dec     hl
+                dec     hl
 .next
-        ld      bc, DATA_SIZE_PER_ENTITY
-        add     hl, bc
+                ld      bc, DATA_SIZE_PER_ENTITY
+                add     hl, bc
         pop     bc
         djnz    .loop
 

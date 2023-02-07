@@ -11,7 +11,7 @@ TRATE_ENTITIES_TABLE
 ;  in-> ix: entity vars.
 ;===============================
 trate_gen_stopwalk
-
+trate_gen_stopwalk_right
 .PERIOD_TIME    equ     40
         ld      a, [ix+OFFSET_IS_VISIBLE]
         cp      0
@@ -37,11 +37,14 @@ trate_gen_stopwalk
 
                         call    get_next_empty_destructible_entity_ix
                         ld      [ix+OFFSET_TYPE], ENTITY_STOPWALK
-                        ld      [ix+OFFSET_STATE], 0
+                        ld      [ix+OFFSET_STATE], 1
                         ld      [ix+OFFSET_STATE_COUNTER], 0
-                        ld      [ix+OFFSET_X], 31*8
+                        ld      [ix+OFFSET_X], 30*8
                         ld      [ix+OFFSET_Y], 8*8
                         ld      [ix+OFFSET_IS_VISIBLE], 1
+                        ld      [ix+OFFSET_DIRECTION], KEY_LEFT
+                        ld      [ix+OFFSET_INC_X], -8
+                        ld      [ix+OFFSET_INC_Y], 0
                 pop     af
 
                 ld      [ix+OFFSET_CHARACTER_TYPE], a
@@ -70,7 +73,7 @@ trate_stopwalk
 
 .WALK_INC       equ     8
 .WALK_TIME      equ     20
-.STOP_TIME      equ     5
+.STOP_TIME      equ     2
 .STATE_STOPPED  equ     0
 .STATE_WALKING  equ     1
         ld      a, [ix+OFFSET_IS_VISIBLE]
@@ -96,6 +99,11 @@ trate_stopwalk
         cp      .WALK_TIME
         jr      z, .change_state_stopped
 
+        ld      a, [ix+OFFSET_X]
+        ld      [tmp_pos_x], a
+        ld      a, [ix+OFFSET_Y]
+        ld      [tmp_pos_y], a
+
         ld      a, [ix+OFFSET_INC_X]
         add     [ix+OFFSET_X]
         ld      [ix+OFFSET_X], a
@@ -105,59 +113,30 @@ trate_stopwalk
         ld      [ix+OFFSET_Y], a
 
         call    check_if_valid_position_entity
-        jp      nz, .turn_around
+        jp      nz, .undo
 
         ld      a, [ix+OFFSET_X]
-        cp      31*8+1
-        jp      nc, .turn_around
+        cp      30*8+1
+        jp      nc, .undo
 
         cp      8
-        jp      c, .turn_around
+        jp      c, .undo
 
         ld      a, [ix+OFFSET_Y]
         cp      22*8
-        jp      nc, .turn_around
+        jp      nc, .undo
 
-        cp      8*2+8
-        jp      c, .turn_around
+        cp      8*3+8
+        jp      c, .undo
 
         jp      .render
 
-.turn_around
-        ld      a, [ix+OFFSET_INC_X]        
-        cp      0
-        jr      z, .turn_around_y
-
-.check_turn_around_x
-        ld      a, [ix+OFFSET_INC_X]
-        cp      0
-        jp      z, .trate_walking
-
-        neg
-        ld      [ix+OFFSET_INC_X], a
-
-        cp      0
-        jr      c, .left
-
-        ld      [ix+OFFSET_DIRECTION], KEY_RIGHT
-        jr      .trate_walking
-.left
-        ld      [ix+OFFSET_DIRECTION], KEY_LEFT
-        jr      .trate_walking
-
-.turn_around_y
-        ld      a, [ix+OFFSET_INC_Y]
-        neg
-        ld      [ix+OFFSET_INC_Y], a
-
-        cp      0
-        jr      c, .up
-
-        ld      [ix+OFFSET_DIRECTION], KEY_DOWN
-        jr      .check_turn_around_x
-.up
-        ld      [ix+OFFSET_DIRECTION], KEY_UP
-        jr      .check_turn_around_x
+.undo
+        ld      a, [tmp_pos_x]
+        ld      [ix+OFFSET_X], a
+        ld      a, [tmp_pos_y]
+        ld      [ix+OFFSET_Y], a
+        jp      .render
 
 .change_state_stopped
         ld      [ix+OFFSET_STATE_COUNTER], 0
@@ -180,7 +159,8 @@ trate_stopwalk
         jr      c, .change_right
         cp      192
         jr      c, .change_down
-.change_left
+
+                ; change_left
         ld      [ix+OFFSET_INC_X], -.WALK_INC
         ld      [ix+OFFSET_INC_Y], 0
         ld      [ix+OFFSET_DIRECTION], KEY_LEFT

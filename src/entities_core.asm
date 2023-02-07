@@ -632,7 +632,7 @@ render_character_1
         ld      b, [ix+OFFSET_X]
         ld      c, [ix+OFFSET_Y]
         call    YXToOffset
-        ld      hl, camera_view
+        ld      hl, camera_view - 33 ; From x,y to upper-left tile to render.
         add     hl, de
         
         ld      a, [ix+OFFSET_DIRECTION]
