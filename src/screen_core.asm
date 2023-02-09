@@ -126,8 +126,13 @@ reset_sprites_list
 
 ;============================================
 ;::build_level
+; hl->compressed level map 
 ;============================================
 build_level
+        
+        call    unzip_level
+
+
         ld      de, the_level
         ld      b, 22    ; macrotiles per column
 
@@ -366,161 +371,6 @@ RetNo
 
 
 
-;=======================================================
-;::CanGo_OLD
-;       in-> BC: YX (B=X, C=Y)
-;========================================================
-CanGo_OLD
-
-        ld      [param_can_go_y], bc
-
-        call    YXToOffset
-        ld      hl, camera_view
-        add     hl, de
-
-                ; Si X%8=0 ...
-        ld      a, [param_can_go_x]
-        and     7
-        cp      0
-        jp      z, .modx0
-
-                ; si x%8 != 0 mira la y
-        ld      a, [param_can_go_y]
-        and     7
-        cp      0
-        jp      z, .modxno0y0
-
-.modxno0yno0    ; mira actual, siguiente y anterior en x y en y
-        ld      a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        inc   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        dec   hl
-        dec   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        ld    bc, -32
-        add   hl, bc    ;linea superior
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        inc   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        inc   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        ld    bc, 64
-        add   hl, bc    ;linea inferior a la central
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        dec   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        dec   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-    jp    RetYes
-
-.modxno0y0 ; //x%8 != 0 y y%8=0-> mira actual, siguiente y anterior
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        inc   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        dec   hl
-        dec   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        ld    bc, -32
-        add   hl, bc    ;linea superior
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        inc   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        inc   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        jp    RetYes
-
-.modx0  ;//x%8=0. mira la y...
-        ld    a, [param_can_go_y]
-        and   7
-        cp    0
-        jp    z, .modxy0
-
-.modx0yno0 ;//x%8 = 0 y y%8 != 0 -> mira los actuales y los anteriores en x y actuales, anteriores y posteriores en y
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        dec   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        ld    bc, -32
-        add   hl, bc    ; linea superior
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        inc   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        ld    bc, 64
-        add   hl, bc    ; linea inferior a la central
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        dec   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        jp    RetYes
-
-.modxy0 ;//x%8=0 y y%8=0 -> mira los actuales y los anteriores
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        dec   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        ld    bc, -32
-        add   hl, bc
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        inc   hl
-        ld    a, [hl]
-        cp    SOLID_TILE
-        jp    nc, RetNo
-        jp    RetYes
-
-;RetYes
-        xor   a
-        cp    0
-        ret
-
-;RetNo
-        xor   a
-        cp    1
-        ret
         
 ;=================================================
 ;::IsSolidTile
@@ -533,3 +383,13 @@ IsSolidTile
 
         jp      RetNo
 
+;==========================================
+;::unzip_level
+;   in-> hl compressed level data
+;   out->hl decompressed level data
+;==========================================
+unzip_level
+        ld      de, tmp_unzip
+        call    pletter_unpack
+        ld      hl, tmp_unzip
+        ret
