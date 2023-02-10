@@ -173,7 +173,6 @@ TrateLeftKey
 
         ld      a, [player_x]
         cp      CHANGE_LEVEL_MIN_X
-.assert
         jp      c, LoadLevelLeft
 
         sub     PLAYER_INC
@@ -254,8 +253,7 @@ TrateUpKey
 
         ld      a, [player_y]
         cp      CHANGE_LEVEL_MIN_Y
-.assert
-        jp      c, .assert
+        jp      c, LoadLevelUp
 
         sub     PLAYER_INC
         ld      [player_y], a
@@ -314,8 +312,7 @@ TrateDownKey
 
         ld      a, [player_y]
         cp      CHANGE_LEVEL_MAX_Y
-.assert
-        jp      nc, .assert
+        jp      nc, LoadLevelDown
 
         add     PLAYER_INC
         ld      [player_y], a
@@ -371,21 +368,7 @@ UndoMovement
         ret
 
 
-;================================
-;::LoadLevelRight
-;================================
-LoadLevelRight
-        ld      a, KEY_RIGHT
-        call    ChangeLevel
-        ret
 
-;================================
-;::LoadLevelLeft
-;================================
-LoadLevelLeft
-        ld      a, KEY_LEFT
-        call    ChangeLevel
-        ret
 
 ;================================
 ;::set_player_frame

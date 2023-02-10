@@ -129,9 +129,7 @@ reset_sprites_list
 ; hl->compressed level map 
 ;============================================
 build_level
-        
         call    unzip_level
-
 
         ld      de, the_level
         ld      b, 22    ; macrotiles per column

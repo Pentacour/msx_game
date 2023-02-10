@@ -30,8 +30,10 @@ init_game
 
 ;        call    load_sword_sprites
 
-        xor     a
+        ;xor     a
+        ld      a, 12
         ld      [level], a
+        xor     a
         ld      [player_space_key_pressed], a
         ld      [debug_number_of_indestructibles], a
 
@@ -47,45 +49,6 @@ init_game
 
         jp      main_post_init_game
 
-
-;============================================
-;::init_level
-;============================================
-init_level
-        xor     a
-        ld      [player_key_pressed], a
-        ld      [player_inc_y], a
-        ld      [player_key_up_pressed], a
-        ld      [player_space_key_pressed], a
-        ld      [player_attack_counter], a
-        ld      [player_attacking_no_move], a
-        ld      [player_inter_scroll_counter_x], a
-        ld      [concurrent_shoots], a
-
-        ld      a, KEY_RIGHT
-        ld      [player_direction], a
-
-        ;call    reset_entities
-
-        call    init_tileset
-
-        ld      a, [level]
-        sla     a
-        ld      c, a
-        ld      b, 0
-        ld      hl, map_data
-        add     hl, bc
-
-        ld      e, [hl]
-        inc     hl
-        ld      d, [hl]
-        ex      de, hl
-
-        call    build_level
-        call    reset_entities
-        call    init_entities_level
-
-        ret
 
 
 
@@ -184,24 +147,60 @@ load_tileset_character_1
         ret
 
 
+
+;================================
+;::LoadLevelRight
+;================================
+LoadLevelRight:
+        ld      a, KEY_RIGHT
+        call    ChangeLevel
+        ret
+
+;================================
+;::LoadLevelLeft
+;================================
+LoadLevelLeft:
+        ld      a, KEY_LEFT
+        call    ChangeLevel
+        ret
+
+;================================
+;::LoadLevelDown
+;================================
+LoadLevelDown:
+        ld      a, KEY_DOWN
+        call    ChangeLevel
+        ret
+
+;================================
+;::LoadLevelUp
+;================================
+LoadLevelUp:
+        ld      a, KEY_UP
+        call    ChangeLevel
+        ret
+
+
 ;===============================
 ;::ChangeLevel
 ;       in-> a: change direction
 ;===============================
 ChangeLevel
-
         cp      KEY_RIGHT
         jp      z, .TrateRight
         cp      KEY_LEFT
         jp      z, .TrateLeft
+        cp      KEY_DOWN
+        jp      z, .TrateDown
 
-        ret
+        jp      .TrateUp
 
-.TrateRight
+
+.TrateRight:
         ld      a, [level]
         ld      b, a
-
         ld      hl, SCREENS_RIGHT
+.LoopRight
         ld      a, [hl]
         cp      b
         jp      z, .FoundRight
@@ -209,7 +208,7 @@ ChangeLevel
         jp      z, .assert
 
         inc     hl
-        jp      .TrateRight
+        jp      .LoopRight
         
 .FoundRight
         xor     a
@@ -219,11 +218,34 @@ ChangeLevel
         inc     hl
         jp      change_level
 
+.TrateDown
+        ld      a, [level]
+        ld      b, a
+        ld      hl, SCREENS_DOWN
+.LoopDown        
+        ld      a, [hl]
+        cp      b
+        jp      z, .FoundDown
+        cp      EOF
+        jp      z, .assert
+
+        inc     hl
+        jp      .LoopDown
+
+.FoundDown
+        xor     a
+        ld      [camera_tile_y_top], a
+        ld      a, 8*3
+        ld      [player_y], a
+        inc     hl
+        jp      change_level
+
+
 .TrateLeft
         ld      a, [level]
         ld      b, a
-
         ld      hl, SCREENS_RIGHT+1
+.LoopLeft
         ld      a, [hl]
         cp      b
         jp      z, .FoundLeft
@@ -231,7 +253,7 @@ ChangeLevel
         jp      z, .assert
 
         inc     hl
-        jp      .TrateLeft
+        jp      .LoopLeft
 
 .FoundLeft
         ld      a, 32
@@ -241,9 +263,29 @@ ChangeLevel
         dec     hl
         jp      change_level
 
+.TrateUp
+        ld      a, [level]
+        ld      b, a
+        ld      hl, SCREENS_DOWN+1
+.LoopUp
+        ld      a, [hl]
+        cp      b
+        jp      z, .FoundUp
+        cp      EOF
+        jp      z, .assert
+
+        inc     hl
+        jp      .LoopUp
+
+.FoundUp
+        ld      a, 22
+        ld      [camera_tile_y_top], a
+        ld      a, 8*22
+        ld      [player_y], a
+        dec     hl
+        jp      change_level
 
 .assert jr .assert
-
 
 ;==================================
 ;::change_level
@@ -253,4 +295,43 @@ change_level
         ld      a, [hl]
         ld      [level], a
         jp      init_level
+
+;============================================
+;::init_level
+;============================================
+init_level
+        xor     a
+        ld      [player_key_pressed], a
+        ld      [player_inc_y], a
+        ld      [player_key_up_pressed], a
+        ld      [player_space_key_pressed], a
+        ld      [player_attack_counter], a
+        ld      [player_attacking_no_move], a
+        ld      [player_inter_scroll_counter_x], a
+        ld      [concurrent_shoots], a
+
+        ld      a, KEY_RIGHT
+        ld      [player_direction], a
+
+        ;call    reset_entities
+
+        call    init_tileset
+
+        ld      a, [level]
+        sla     a
+        ld      c, a
+        ld      b, 0
+        ld      hl, map_data
+        add     hl, bc
+
+        ld      e, [hl]
+        inc     hl
+        ld      d, [hl]
+        ex      de, hl
+
+        call    build_level
+        call    reset_entities
+        call    init_entities_level
+
+        ret
 
