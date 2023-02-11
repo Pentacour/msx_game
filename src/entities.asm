@@ -2,9 +2,14 @@ ENTITY_SHOOT_SIMPLE equ 1
 ENTITY_GEN_STOPWALK equ 2
 ENTITY_STOPWALK equ 3
 ENTITY_FOLLOWPLAYER equ 4
+ENTITY_GEN_STOPWALK_RIGHT equ 5
+ENTITY_GEN_STOPWALK_RIGHT_FIXED equ 6
+ENTITY_GEN_STOPWALK_LEFT_FIXED equ 7
+
 
 TRATE_ENTITIES_TABLE
-    dw 0, trate_shoot_simple,trate_gen_stopwalk,trate_stopwalk,trate_followplayer
+    dw 0, trate_shoot_simple,trate_gen_stopwalk,trate_stopwalk,trate_followplayer,trate_gen_stopwalk_right, trate_gen_stopwalk_right_fixed
+    dw trate_gen_stopwalk_left_fixed
 
 ;================================
 ;::trate_gen_stopwalk
@@ -12,6 +17,8 @@ TRATE_ENTITIES_TABLE
 ;===============================
 trate_gen_stopwalk
 trate_gen_stopwalk_right
+trate_gen_stopwalk_right_fixed
+trate_gen_stopwalk_left_fixed
 .PERIOD_TIME    equ     40
         ld      a, [ix+OFFSET_IS_VISIBLE]
         cp      0
@@ -29,8 +36,12 @@ trate_gen_stopwalk_right
 
                 ; Generate a stopwalk entity
 
+        ld      a, [ix+OFFSET_TYPE]
+        ld      [tmp_gen_type], a
+        ld      a, [ix+OFFSET_Y]
+        ld      [tmp_pos_y], a
         ld      a, [ix+OFFSET_CHARACTER_TYPE]
-
+        
         push    ix
 
                 push    af
@@ -39,10 +50,30 @@ trate_gen_stopwalk_right
                         ld      [ix+OFFSET_TYPE], ENTITY_STOPWALK
                         ld      [ix+OFFSET_STATE], 1
                         ld      [ix+OFFSET_STATE_COUNTER], 0
-                        ld      [ix+OFFSET_X], 30*8
-                        ld      [ix+OFFSET_Y], 8*8
-                        ld      [ix+OFFSET_IS_VISIBLE], 1
+                        ld      a, [tmp_gen_type]
+                        cp      ENTITY_GEN_STOPWALK_RIGHT_FIXED
+                        jp      z, .trate_right_fixed
+                        cp      ENTITY_GEN_STOPWALK_LEFT_FIXED
+                        jp      z, .trate_left_fixed
+
+                        call    assign_random_free_y
                         ld      [ix+OFFSET_DIRECTION], KEY_LEFT
+                        jp      .continue_creating
+.trate_right_fixed
+                        ld      a, [tmp_pos_y]
+                        ld      [ix+OFFSET_Y], a
+                        ld      [ix+OFFSET_X], 30*8
+                        ld      [ix+OFFSET_DIRECTION], KEY_LEFT
+                        jp      .continue_creating
+.trate_left_fixed
+                        ld      a, [tmp_pos_y]
+                        ld      [ix+OFFSET_Y], a
+                        ld      [ix+OFFSET_X], 1*8
+                        ld      [ix+OFFSET_DIRECTION], KEY_RIGHT
+                        jp      .continue_creating
+
+.continue_creating
+                        ld      [ix+OFFSET_IS_VISIBLE], 1
                         ld      [ix+OFFSET_INC_X], -8
                         ld      [ix+OFFSET_INC_Y], 0
                 pop     af
@@ -62,8 +93,8 @@ trate_gen_stopwalk_right
         add     hl, de
         xor     a
         ld      [hl], a
-
         jp      next_entity
+
 
 ;================================
 ;::trate_stopwalk
@@ -81,8 +112,8 @@ trate_stopwalk
         jp      z, inc_not_visible_counter
 
         ld      a, [animation_tick]
-        and     15
-        cp      15
+        and     7
+        cp      7
         jp      nz, .render
 
         ld      a, [ix+OFFSET_STATE]

@@ -18,32 +18,19 @@ init_game
 
         call    reset_sprites_list
 
-;        call    load_player_sprites
-;        ld      a, 14
-;        ld      [player_sprite_1 + SPRITE_COLOR], a
-;        ld      a, 11
-;        ld      [player_sprite_2 + SPRITE_COLOR], a
-;        ld      a, 4
-;        ld      [player_sprite_3 + SPRITE_COLOR], a
-;        xor     a
-;        ld      [player_frame], a
-
-;        call    load_sword_sprites
-
-        ;xor     a
-        ld      a, 12
+        ld      a, 14
         ld      [level], a
         xor     a
         ld      [player_space_key_pressed], a
         ld      [debug_number_of_indestructibles], a
 
-        ld      a, 10
+        ld      a, 0
         ld      [camera_tile_y_top], a
 
-        ld      a, 10
+        ld      a, 0
         ld      [camera_tile_x_left], a
 
-        ld      bc, 5*8*256+15*8
+        ld      bc, 3*8*256+13*8
         ld      [player_y], bc
 
 

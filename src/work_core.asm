@@ -133,7 +133,9 @@ scroll_entities_direction       #1
 prev_y                          #1
 prev_x                          #1
 check_colision_pos              #2
-
+tmp_var_1                       #1
+tmp_var_2                       #1
+tmp_gen_type                    #1
 ;============================================
 ; screen vars
 ;============================================

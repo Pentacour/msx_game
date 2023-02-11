@@ -665,3 +665,44 @@ render_character_1
         ld      [hl], a
 
         ret
+
+;===========================
+;::assign_random_free_y
+; IN->ix with x filled
+; OUT -> z assigned
+;===========================
+assign_random_free_y
+        xor     a
+        ld      [tmp_var_1], a
+
+        ld      a, [animation_tick]
+        ld      [tmp_var_2], a
+.loop        
+        cp      8*3
+        jp      c, .abort
+        cp      23*8
+        jp      nc, .abort
+
+        ld      [ix+OFFSET_Y], a
+
+        call    check_if_valid_position_entity
+        ret     z
+
+        ld      a, [tmp_var_1]
+        inc     a
+        ld      [tmp_var_1], a
+        cp      5
+        jp      nc, .abort
+
+        ld      a, [tmp_var_2]
+        add     8
+        ld      [tmp_var_2], a
+        jp      .loop
+
+.abort
+        ld      [ix+OFFSET_TYPE], 0
+        ret
+
+
+
+
