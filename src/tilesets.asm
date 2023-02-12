@@ -1,4 +1,4 @@
 sea_tileset_patterns
-    incbin "sea_tileset.bin.chr.plet5"
+    incbin "./tiles/sea_tileset.bin.chr.plet5"
 sea_tileset_colors
-    incbin "sea_tileset.bin.clr.plet5"
+    incbin "./tiles/sea_tileset.bin.clr.plet5"
