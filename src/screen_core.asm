@@ -1,6 +1,6 @@
 
 
-SOLID_TILE                      EQU     64
+SOLID_TILE                      EQU     128
 
 ;========================================
 ;::clear_screen

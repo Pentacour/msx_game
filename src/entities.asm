@@ -1,15 +1,11 @@
 ENTITY_SHOOT_SIMPLE equ 1
-ENTITY_GEN_STOPWALK equ 2
+ENTITY_GEN_STOPWALK_RIGHT_FIXED equ 2
 ENTITY_STOPWALK equ 3
-ENTITY_FOLLOWPLAYER equ 4
-ENTITY_GEN_STOPWALK_RIGHT equ 5
-ENTITY_GEN_STOPWALK_RIGHT_FIXED equ 6
-ENTITY_GEN_STOPWALK_LEFT_FIXED equ 7
 
+ENTITY_GEN_STOPWALK_LEFT_FIXED equ 4
 
 TRATE_ENTITIES_TABLE
-    dw 0, trate_shoot_simple,trate_gen_stopwalk,trate_stopwalk,trate_followplayer,trate_gen_stopwalk_right, trate_gen_stopwalk_right_fixed
-    dw trate_gen_stopwalk_left_fixed
+    dw 0, trate_shoot_simple,trate_gen_stopwalk_right_fixed,trate_stopwalk
 
 ;================================
 ;::trate_gen_stopwalk
@@ -218,121 +214,4 @@ trate_stopwalk
 .render
         call    render_character
         jp      next_entity
-
-;================================
-;::trate_followplayer
-;  in-> ix: entity vars.
-;===============================
-trate_followplayer
-
-.WALK_INC       equ     8
-        ld      a, [ix+OFFSET_IS_VISIBLE]
-        cp      0
-        jp      z, inc_not_visible_counter
-
-        ld      a, [animation_tick]
-        and     15
-        cp      15
-        jp      nz, .render
-
-        call    where_is_player
-
-        cp      KEY_DOWN
-        jp      z, .change_down
-        cp      KEY_UP
-        jp      z, .change_up
-        cp      KEY_LEFT
-        jp      z, .change_left
-        cp      KEY_RIGHT
-        jp      z, .change_right
-        cp      KEY_UPLEFT
-        jp      z, .change_up_left
-        cp      KEY_DOWNLEFT
-        jp      z, .change_down_left
-        cp      KEY_UPRIGHT
-        jp      z, .change_up_right
-        cp      KEY_DOWNRIGHT
-        jp      z, .change_down_right
-
-
-.change_left
-        ld      [ix+OFFSET_INC_X], -.WALK_INC
-        ld      [ix+OFFSET_INC_Y], 0
-        ld      [ix+OFFSET_DIRECTION], KEY_LEFT
-        jp      .move
-
-.change_up
-        ld      [ix+OFFSET_INC_Y], -.WALK_INC
-        ld      [ix+OFFSET_INC_X], 0
-        ld      [ix+OFFSET_DIRECTION], KEY_UP
-        jp      .move
-
-.change_right
-        ld      [ix+OFFSET_INC_X], .WALK_INC
-        ld      [ix+OFFSET_INC_Y], 0
-        ld      [ix+OFFSET_DIRECTION], KEY_RIGHT
-        jp      .move
-
-.change_down
-        ld      [ix+OFFSET_INC_Y], .WALK_INC
-        ld      [ix+OFFSET_INC_X], 0
-        ld      [ix+OFFSET_DIRECTION], KEY_DOWN
-        jp      .move
-
-.change_up_left
-        ld      [ix+OFFSET_INC_Y], -.WALK_INC
-        ld      [ix+OFFSET_INC_X], -.WALK_INC
-        ld      [ix+OFFSET_DIRECTION], KEY_UPLEFT
-        jp      .move
-
-.change_up_right
-        ld      [ix+OFFSET_INC_X], .WALK_INC
-        ld      [ix+OFFSET_INC_Y], -.WALK_INC
-        ld      [ix+OFFSET_DIRECTION], KEY_UPRIGHT
-        jp      .move
-
-.change_down_right
-        ld      [ix+OFFSET_INC_X], .WALK_INC
-        ld      [ix+OFFSET_INC_Y], .WALK_INC
-        ld      [ix+OFFSET_DIRECTION], KEY_DOWNRIGHT
-        jp      .move
-
-.change_down_left
-        ld      [ix+OFFSET_INC_Y], .WALK_INC
-        ld      [ix+OFFSET_INC_X], -.WALK_INC
-        ld      [ix+OFFSET_DIRECTION], KEY_DOWNLEFT
-        jp      .move
-
-
-.move
-        ld      a, [ix+OFFSET_X]
-        ld      [prev_x], a
-        ld      a, [ix+OFFSET_Y]
-        ld      [prev_y], a
-        
-        ld      a, [ix+OFFSET_INC_X]
-        add     [ix+OFFSET_X]
-        ld      [ix+OFFSET_X], a
-
-        ld      a, [ix+OFFSET_INC_Y]
-        add     [ix+OFFSET_Y]
-        ld      [ix+OFFSET_Y], a
-
-        call    check_if_valid_position_entity
-        jr      nz, .undo
-
-.check_collision
-        ld      de, [player_y]
-        call    is_collision_player_entity
-        jp      z, trate_collision_player_entity
-
-.render
-        call    render_character
-        jp      next_entity
-
-.undo
-        ld      bc, [prev_y]
-        ld      [ix+OFFSET_X], b
-        ld      [ix+OFFSET_Y], c
-        jr      .check_collision
 

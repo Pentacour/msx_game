@@ -1,6 +1,8 @@
 CHARACTER_1     equ     1
 CHARACTER_2     equ     2
 
+CHARACTER_1_OFFSET_TILE equ 32
+
 ;=======================================
 ;::trate_entities
 ;========================================
@@ -640,7 +642,7 @@ render_character_1
         sla     a
         sla     a
         sla     a
-        add     96
+        add     CHARACTER_1_OFFSET_TILE
         ld      b, a ; save tile
         ld      a, [animation_tick]
         and     8

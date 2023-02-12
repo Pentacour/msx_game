@@ -1,4 +1,4 @@
-CHARACTER_1_OFFSET equ 96
+
  
 
 ;===========================================
@@ -97,17 +97,17 @@ load_tileset_character_1
                 call    pletter_unpack
 
                 ld      hl, tmp_unzip
-                ld      de, CHRTBL + CHARACTER_1_OFFSET*8
+                ld      de, CHRTBL + CHARACTER_1_OFFSET_TILE*8
                 ld      bc, 64*8
                 call    LDIRVM
 
                 ld      hl, tmp_unzip
-                ld      de, CHRTBL + CHARACTER_1_OFFSET*8 + 32*8*8
+                ld      de, CHRTBL + CHARACTER_1_OFFSET_TILE*8 + 32*8*8
                 ld      bc, 64*8
                 call    LDIRVM
 
                 ld      hl, tmp_unzip
-                ld      de, CHRTBL+ CHARACTER_1_OFFSET*8 + 32*8*8*2
+                ld      de, CHRTBL+ CHARACTER_1_OFFSET_TILE*8 + 32*8*8*2
                 ld      bc, 64*8
                 call    LDIRVM
 
@@ -117,17 +117,17 @@ load_tileset_character_1
         call    pletter_unpack
 
         ld      hl, tmp_unzip
-        ld      de, CLRTBL + CHARACTER_1_OFFSET*8
+        ld      de, CLRTBL + CHARACTER_1_OFFSET_TILE*8
         ld      bc, 64*8
         call    LDIRVM
 
         ld      hl, tmp_unzip
-        ld      de, CLRTBL + CHARACTER_1_OFFSET*8 + 32*8*8
+        ld      de, CLRTBL + CHARACTER_1_OFFSET_TILE*8 + 32*8*8
         ld      bc, 64*8
         call    LDIRVM
 
         ld      hl, tmp_unzip
-        ld      de, CLRTBL + CHARACTER_1_OFFSET*8 + 32*8*8*2
+        ld      de, CLRTBL + CHARACTER_1_OFFSET_TILE*8 + 32*8*8*2
         ld      bc, 64*8
         call    LDIRVM
 
