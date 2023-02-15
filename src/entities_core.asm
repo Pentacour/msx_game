@@ -115,7 +115,7 @@ reset_entities
 ;       in: IX entity data.
 ;       out: True if valid position.
 ;========================================
-check_if_valid_position_entity
+check_if_valid_position_entity:
         
         ld      b, [ix+OFFSET_X]
         ld      c, [ix+OFFSET_Y]
@@ -123,20 +123,20 @@ check_if_valid_position_entity
         ld      hl, camera_view
         add     hl, de
         ld      a, [hl]
-        cp      SOLID_TILE
+        cp      CHARACTER_1_OFFSET_TILE
         jp      nc, .ret_no
         dec     hl
         ld      a, [hl]
-        cp      SOLID_TILE
+        cp      CHARACTER_1_OFFSET_TILE
         jp      nc, .ret_no
         ld      bc, -32
         add     hl, bc
         ld      a, [hl]
-        cp      SOLID_TILE
+        cp      CHARACTER_1_OFFSET_TILE
         jp      nc, .ret_no
         inc     hl
         ld      a, [hl]
-        cp      SOLID_TILE
+        cp      CHARACTER_1_OFFSET_TILE
         jp      nc, .ret_no
 
         xor     a

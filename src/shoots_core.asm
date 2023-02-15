@@ -105,3 +105,41 @@ is_colision_player_shoot_entity
         xor     a
         cp      1
         ret
+
+
+;=======================================
+;::check_if_valid_position_shoot
+;       in: IX entity data.
+;       out: True if valid position.
+;========================================
+check_if_valid_position_shoot:
+        
+        ld      b, [ix+OFFSET_X]
+        ld      c, [ix+OFFSET_Y]
+        call    YXToOffset
+        ld      hl, camera_view
+        add     hl, de
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, .ret_no
+        dec     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, .ret_no
+        ld      bc, -32
+        add     hl, bc
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, .ret_no
+        inc     hl
+        ld      a, [hl]
+        cp      SOLID_TILE
+        jp      nc, .ret_no
+
+        xor     a
+        cp      0
+        ret
+.ret_no
+        xor     a
+        cp      1
+        ret

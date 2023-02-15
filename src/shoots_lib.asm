@@ -33,7 +33,7 @@ trate_shoot_simple
         jp      c, .quit_entity
         ld      [ix+OFFSET_Y], a
 
-        call    check_if_valid_position_entity
+        call    check_if_valid_position_shoot
         jp      nz, .quit_entity
         
         call    check_if_player_shoot_hit
