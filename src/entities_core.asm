@@ -35,55 +35,59 @@ next_entity
 trate_entities_finish 
         ret
 
-;TODO: Missing control when list is full.
-;==========================================
-;::get_next_empty_desctructible_entity_hl
-;   out->hl
-;===========================================
-get_next_empty_destructible_entity_hl
-        ld      hl, list_entities_data
-.loop
-        ld      a, [hl]
-        cp      0
-        ret     z
-        cp      EOF
-        jp      z, .overflow_assert
-        ld      bc, DATA_SIZE_PER_ENTITY
-        add     hl, bc
-        jp      .loop
-
-.overflow_assert                
-        jr      .overflow_assert
-
 ;==========================================
 ;::get_next_empty_indesctructible_entity_hl
-;   out->hl
+;   out->hl, nz if without of space
 ;===========================================
-get_next_empty_indestructible_entity_hl
+get_next_empty_indestructible_entity_hl:
         ld      hl, list_indestructible_entities_data
 .loop
         ld      a, [hl]
         cp      0
         ret     z
         cp      EOF
-        jp      z, .overflow_assert
+        jp      z, .overflow
         ld      bc, DATA_SIZE_PER_ENTITY
         add     hl, bc
         jp      .loop
 
-.overflow_assert                
-        jr      .overflow_assert
+.overflow
+        xor     a
+        cp      1
+        ret
 
 
 ;==========================================
 ;::get_next_empty_destructible_entity_ix
-;   out->ix
+;   out->ix, nz if without space
 ;===========================================
-get_next_empty_destructible_entity_ix
+get_next_empty_destructible_entity_ix:
         call    get_next_empty_destructible_entity_hl
         push    hl
         pop     ix
         ret
+
+;==========================================
+;::get_next_empty_desctructible_entity_hl
+;   out->hl, nz if without space
+;===========================================
+get_next_empty_destructible_entity_hl:
+        ld      hl, list_entities_data
+.loop
+        ld      a, [hl]
+        cp      0
+        ret     z
+        cp      EOF
+        jp      z, .overflow
+        ld      bc, DATA_SIZE_PER_ENTITY
+        add     hl, bc
+        jp      .loop
+
+.overflow
+        xor     a
+        cp      1
+        ret
+
 
 ;==========================================
 ;::get_next_empty_indestructible_entity_ix
@@ -353,8 +357,6 @@ init_entities_level
         inc     hl
         ld      d, [hl]
         ex      de, hl
-
-        ; load entities characters
 
         ld      e, [hl]
         inc     hl

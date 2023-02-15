@@ -172,7 +172,7 @@ LoadLevelUp:
 ;::ChangeLevel
 ;       in-> a: change direction
 ;===============================
-ChangeLevel
+ChangeLevel:
         cp      KEY_RIGHT
         jp      z, .TrateRight
         cp      KEY_LEFT
@@ -300,8 +300,6 @@ init_level
         ld      a, KEY_RIGHT
         ld      [player_direction], a
 
-        ;call    reset_entities
-
         call    init_tileset
 
         ld      a, [level]
@@ -319,6 +317,7 @@ init_level
         call    build_level
         call    reset_entities
         call    init_entities_level
+        call    scroll_entities
 
         ret
 

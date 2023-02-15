@@ -15,7 +15,7 @@ trate_gen_stopwalk
 trate_gen_stopwalk_right
 trate_gen_stopwalk_right_fixed
 trate_gen_stopwalk_left_fixed
-.PERIOD_TIME    equ     40
+.PERIOD_TIME    equ     20
         ld      a, [ix+OFFSET_IS_VISIBLE]
         cp      0
         jp      z, next_entity 
@@ -43,6 +43,7 @@ trate_gen_stopwalk_left_fixed
                 push    af
 
                         call    get_next_empty_destructible_entity_ix
+                        jp      nz, .abort_create
                         ld      [ix+OFFSET_TYPE], ENTITY_STOPWALK
                         ld      [ix+OFFSET_STATE], 1
                         ld      [ix+OFFSET_STATE_COUNTER], 0
@@ -91,6 +92,11 @@ trate_gen_stopwalk_left_fixed
         ld      [hl], a
         jp      next_entity
 
+.abort_create
+        pop     af      
+        pop     ix
+        ld      [ix+OFFSET_STATE_COUNTER], 0
+        jp      next_entity
 
 ;================================
 ;::trate_stopwalk
