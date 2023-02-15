@@ -1,7 +1,7 @@
 CHARACTER_1     equ     1
 CHARACTER_2     equ     2
 
-CHARACTER_1_OFFSET_TILE equ 32
+CHARACTER_1_OFFSET_TILE equ 64
 
 ;=======================================
 ;::trate_entities
@@ -411,7 +411,7 @@ post_init_entity_type
 ;::init_entity_character
 ; in->hl pointer to character
 ;=================================================
-init_entity_character
+init_entity_character:
         ld      e, [hl]
         inc     hl
         ld      d, [hl]
