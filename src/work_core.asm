@@ -112,6 +112,7 @@ OFFSET_COUNTER_2                EQU 11
 ;============================================
 ; function parameters and local vars
 ;============================================
+scroll_entities_types           #1
 param_valid_position_y          #1
 param_valid_position_x      	#1
 prev_player_y                   #2
@@ -136,6 +137,7 @@ check_colision_pos              #2
 tmp_var_1                       #1
 tmp_var_2                       #1
 tmp_gen_type                    #1
+tmp_prev_type                   #1
 ;============================================
 ; screen vars
 ;============================================
@@ -189,8 +191,10 @@ debug_number_of_indestructibles  #1
 ;===========================================
 ; list_entities
 ;===========================================
-list_destructible_entities_data    #(MAX_NUMBER_OF_DESTRUCTIBLES_ENTITIES*DATA_SIZE_PER_ENTITY)
-list_indestructible_entities_data  #(MAX_NUMBER_OF_INDESTRUCTIBLES_ENTITIES*DATA_SIZE_PER_ENTITY)
-list_entities_data_end          #1
 list_entities_data EQU list_destructible_entities_data
+list_destructible_entities_data    #(MAX_NUMBER_OF_DESTRUCTIBLES_ENTITIES*DATA_SIZE_PER_ENTITY)
+list_destructible_entities_data_end          #1
+list_indestructible_entities_data  #(MAX_NUMBER_OF_INDESTRUCTIBLES_ENTITIES*DATA_SIZE_PER_ENTITY)
+list_indestructible_entities_data_end          #1
+
 

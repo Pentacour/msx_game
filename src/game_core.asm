@@ -10,7 +10,8 @@ init_game
 
         ld      a, EOF
         ld      [sprites_attributes_eof], a
-        ld      [list_entities_data_end], a
+        ld      [list_indestructible_entities_data_end], a
+        ld      [list_destructible_entities_data_end], a
 
         ld      hl, sprites_attributes - 4
         ld      [current_sprites_index], hl

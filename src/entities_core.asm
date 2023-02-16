@@ -8,13 +8,17 @@ CHARACTER_1_OFFSET_TILE equ 64
 ;========================================
 trate_entities
         ld      b, MAX_NUMBER_OF_ENTITIES
-        ld      ix, list_entities_data
+        ld      ix, list_destructible_entities_data
 
 trate_entities_loop             
         push    bc
-        ld      a, [ix] ;type
+trate_entities_continue
+        ld      a, [ix+OFFSET_TYPE] 
         cp      0
         jp      z, next_entity
+        cp      EOF
+        jp      z, change_indestructible_buffer
+
         sla     a
         ld      c, a
         ld      b, 0
@@ -34,6 +38,11 @@ next_entity
 
 trate_entities_finish 
         ret
+
+change_indestructible_buffer
+        inc     ix
+        jp      trate_entities_continue
+
 
 ;==========================================
 ;::get_next_empty_indesctructible_entity_hl
@@ -72,7 +81,7 @@ get_next_empty_destructible_entity_ix:
 ;   out->hl, nz if without space
 ;===========================================
 get_next_empty_destructible_entity_hl:
-        ld      hl, list_entities_data
+        ld      hl, list_destructible_entities_data
 .loop
         ld      a, [hl]
         cp      0
@@ -105,8 +114,14 @@ get_next_empty_indestructible_entity_ix
 ;======================================
 reset_entities
         ld      de, list_entities_data
-        ld      bc, MAX_NUMBER_OF_ENTITIES*DATA_SIZE_PER_ENTITY
+        ld      bc, MAX_NUMBER_OF_ENTITIES*DATA_SIZE_PER_ENTITY+1
+
         call    reset_big_ram
+
+        ld      a, EOF
+        ld      [list_indestructible_entities_data_end], a
+        ld      [list_destructible_entities_data_end], a
+
         ret
 
 
@@ -139,9 +154,47 @@ check_if_valid_position_entity:
         cp      CHARACTER_1_OFFSET_TILE
         jp      nc, .ret_no
 
+                ; Checks if collide with another entity
+
+        ld      a, [ix+OFFSET_TYPE]
+        ld      [tmp_prev_type], a
+        ld      [ix+OFFSET_TYPE], 0
+        ld      e, [ix+OFFSET_Y]
+        ld      d, [ix+OFFSET_X]
+        ld      [tmp_yx], de
+
+
+        push    ix
+                ld      ix, list_destructible_entities_data
+                ld      b, MAX_NUMBER_OF_DESTRUCTIBLES_ENTITIES
+.loop
+                push    bc
+                        ld      de, [tmp_yx]
+                        ld      a, [ix+OFFSET_TYPE]
+                        cp      0
+                        jp      z, .next
+
+                        call    is_collision_with_entity
+                        jp      z, .ret_no_loop
+.next
+                        ld      bc, DATA_SIZE_PER_ENTITY
+                        add     ix, bc
+                pop     bc
+                djnz    .loop
+        pop     ix
+
+        ld      a, [tmp_prev_type]
+        ld      [ix+OFFSET_TYPE], a
+
         xor     a
         cp      0
         ret
+
+.ret_no_loop
+        pop     bc
+        pop     ix        
+        ld      a, [tmp_prev_type]
+        ld      [ix+OFFSET_TYPE], a
 .ret_no
         xor     a
         cp      1
@@ -160,17 +213,18 @@ set_not_is_visible
 ;       IN-> scroll_entities_direction: Player's direction (KEY_RIGHT, ...)
 ;=========================================
 scroll_entities
+        xor     a
+        ld      [scroll_entities_types], a
+
         push    ix
         ld      ix, list_entities_data
 
 .loop_scroll_entity
-
-        ld      a, [ix]
+        ld      a, [ix+OFFSET_TYPE]
         cp      0
         jp      z, .next_entity
         cp      EOF
-        jp      z, .ret
-
+        jp      z, .check_entities_types
         ld      a, [ix+OFFSET_IS_VISIBLE]
         cp      0
         jp      z, .trate_not_visible_entity
@@ -186,6 +240,20 @@ scroll_entities
         jp      z, .scroll_entity_up
 
 .assert jr .assert
+
+.next_entity
+        ld      bc, DATA_SIZE_PER_ENTITY
+        add     ix, bc
+        jp      .loop_scroll_entity
+
+.check_entities_types
+        ld      a, [scroll_entities_types]
+        cp      1
+        jp	z, .ret
+        ld      a, 1
+        ld      [scroll_entities_types], a
+        inc     ix
+        jp      .loop_scroll_entity
 
 .trate_not_visible_entity
                 ; checks if becomes visible
@@ -261,15 +329,6 @@ scroll_entities
         add     8
         ld      [ix+OFFSET_Y], a
         jp      .next_entity
-
-
-.next_entity
-        ld      bc, DATA_SIZE_PER_ENTITY
-        add     ix, bc
-        ld      a, [ix]
-        cp      EOF
-        jp      z, .ret
-        jp      .loop_scroll_entity
 
 .set_not_visible_by_left
         ld      [ix+OFFSET_IS_VISIBLE], 0
@@ -552,19 +611,18 @@ init_entity_type_1
 
 
 ;====================================
-;::is_collision_player_entity
+;::is_collision_with_entity
 ;    in-> de player [yx], ix
 ;    out->z collision
 ;=====================================
-is_collision_player_entity   
-.PLAYER_WIDTH equ 4
+is_collision_with_entity   
 .ENTITY_WIDTH equ 4
         push    ix
         pop     hl
         inc     hl
         inc     hl      ;y
         
-        ld      a, -.PLAYER_WIDTH
+        ld      a, -.ENTITY_WIDTH
         add     e
         ld      e, a
         ld      a, .ENTITY_WIDTH
@@ -572,7 +630,7 @@ is_collision_player_entity
         cp      e
         jp      c, .ret_no
 
-        ld      a, .PLAYER_WIDTH*2
+        ld      a, .ENTITY_WIDTH*2
         add     e
         ld      e, a
         ld      a, -.ENTITY_WIDTH*2
@@ -582,7 +640,7 @@ is_collision_player_entity
 
         ;x
         inc     hl 
-        ld      a, -.PLAYER_WIDTH
+        ld      a, -.ENTITY_WIDTH
         add     d
         ld      d, a
         ld      a, .ENTITY_WIDTH
@@ -590,7 +648,7 @@ is_collision_player_entity
         cp      d
         jp      c, .ret_no
 
-        ld      a, .PLAYER_WIDTH*2
+        ld      a, .ENTITY_WIDTH*2
         add     d
         ld      d, a
         ld      a, -.ENTITY_WIDTH*2

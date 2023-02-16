@@ -124,7 +124,7 @@ trate_stopwalk
 
 .trate_walking
         ld      de, [player_y]
-        call    is_collision_player_entity
+        call    is_collision_with_entity
         jp      z, trate_collision_player_entity
 
         inc     [ix+OFFSET_STATE_COUNTER]

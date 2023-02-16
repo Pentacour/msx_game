@@ -11,11 +11,6 @@ trate_shoot_simple
         cp      .STATE_CREATE
         jp      z, .create_shoot
 
-        ld      a, [animation_tick]
-        and     1
-        cp      1
-        jp      nz, .render
-
                 ; Move
         ld      a, [ix+OFFSET_INC_X]
         add     [ix+OFFSET_X]
