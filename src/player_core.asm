@@ -1,10 +1,10 @@
 LEVEL_MAX_TILE_RIGHT      EQU 32
 LEVEL_MAX_TILE_DOWN       EQU 22
 
-SCROLL_MARGIN_RIGHT     EQU 28*8
-SCROLL_MARGIN_LEFT      EQU 4*8+1
-SCROLL_MARGIN_UP        EQU 6*8
-SCROLL_MARGIN_DOWN      EQU 18*8
+SCROLL_MARGIN_RIGHT     EQU 24*8
+SCROLL_MARGIN_LEFT      EQU 8*8
+SCROLL_MARGIN_UP        EQU 10*8
+SCROLL_MARGIN_DOWN      EQU 16*8
 
 CHANGE_LEVEL_MAX_X      EQU 31*8
 CHANGE_LEVEL_MIN_X      EQU 1*8+1
@@ -246,7 +246,7 @@ TrateUpLeftKey
 TrateUpKey
         ld      a, [player_y]
         cp      SCROLL_MARGIN_UP
-        jp      nc, .CheckIfScroll
+        jp      c, .CheckIfScroll
 
 .MovePlayer
                 ; Checks if change level

@@ -19,7 +19,7 @@ init_game
 
         call    reset_sprites_list
 
-        ld      a, 14
+        ld      a, 17
         ld      [level], a
         xor     a
         ld      [player_space_key_pressed], a
